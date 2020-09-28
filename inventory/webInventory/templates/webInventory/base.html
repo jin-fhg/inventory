@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock title %}</title>
+
+    {% load static %}
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <!-- Popper JS -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+        <!-- Latest compiled JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+        <!--Data Tables-->
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css">
+        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
+        <!--FontAwesome Icons-->
+        <script src="https://kit.fontawesome.com/a8e4c70d24.js" crossorigin="anonymous"></script>
+
+        <!--Local JS and CSS-->
+        <link href="{% static 'webInventory/css/base.css' %}" rel="stylesheet" type="text/css">
+        {% block header %}
+        {% endblock header %}
+</head>
+<body>
+    {% comment %}Main Container{% endcomment %}
+    <div class="container-fluid">
+        {% comment %}Main Row{% endcomment %}
+        <div class="row" style="margin-top: 40px">
+            {% comment %}Start of SideBar{% endcomment %}
+            <div class="col-sm-2" style="margin-right: 0px; padding-right: 0px; min-height: 100vh;">
+               <nav class="navbar bg-nav navbar-dark" style="border-radius: 4px;">
+                      <ul class="navbar-nav sideBar" style="margin: 0px 20px">
+                            <div class="sidebar-header" style="margin-top: -40px; box-shadow: 0px 0px 6px #848484; border-radius: 4px">
+                                <img src="{% static 'webInventory/static/logo.png' %}">
+                            </div>
+                            <hr class="mt-2 mb-3"/>
+
+                            <li class="nav-item">
+                              <a class="nav-link" href="{% url 'home' %}">
+                                <i class="fas fa-box" style="margin-right: 8px"></i>
+                                  Dashboard
+                              </a>
+                            </li>
+                            <li class="nav-item ">
+                              <a class="nav-link" href="{% url 'inventoryList' %}">
+                                  <i class="fas fa-list" style="margin-right: 8px"></i>
+                                  Inventory List
+                              </a>
+                            </li>
+
+                            <li class="nav-item ">
+                              <a class="nav-link" href="#">
+                                  <i class="fa fa-tag" aria-hidden="true" style="margin-right: 8px"></i>
+                                  Item Tags
+                              </a>
+                            </li>
+
+                            <li class="nav-item ">
+                              <a class="nav-link" href="#">
+                                  <i class="fas fa-chalkboard-teacher" aria-hidden="true" style="margin-right: 8px"></i>
+                                  Manage Users
+                              </a>
+                            </li>
+
+                            <div class="bodyNav">
+
+                            </div>
+                      </ul>
+
+               </nav>
+            </div>
+            {% comment %}End of SideBar{% endcomment %}
+
+
+        <div class="col-sm-10" style=" padding-left: 0px;">
+        {% comment %}Start of Top Navbar{% endcomment %}
+        <div class="sticky-top">
+        <nav class="navbar navbar-expand-sm bg-light navbar-light" style="border-radius: 4px">
+
+          <form class="form-inline">
+              <input type="text" class="form-control" name="search" placeholder="Search..." style="margin-left: 30px; font-size: 12px; width: 250px">
+          </form>
+
+          {% comment %}This is for notification bell{% endcomment %}
+          <ul class="navbar-nav ml-auto">
+              <li class="nav-item dropleft">
+              <a class="nav-link" data-toggle="dropdown">
+              <i class="fas fa-bell"></i>
+              <span class="badge badge-danger" style="border-radius: 50px">{% if numRequests != 0 %} {{ numRequests }} {% endif %}</span>
+              </a>
+              {% comment %}This is the Dropdown Menu{% endcomment %}
+              <div class="dropdown-menu">
+                  <h6 align="center"><b>Notifications</b></h6>
+                <div class="dropdown-divider"></div>
+
+                     <a db_id="{{ item.id }}" class="dropdown-item d-flex align-items-center requestNotifItem" data-toggle="modal" data-target="#notificationRequest">
+
+                      <div class="mr-3">
+                        <div class="circle">
+
+                        </div>
+                      </div>
+                      <div>
+                        <div class="small text-gray-500">{{ item.created_on }}</div>
+                        <span class="font-weight-bold requestSubject">
+                            {{ item.code }}
+                        </span>
+                        <input class="requestContent" name="requestedSoT" type="hidden" value="{{ item.data }}">
+                      </div>
+                    </a>
+                    <div class="dropdown-divider"></div>
+
+                    <div class="dropdown-divider"></div>
+
+              </div>
+            </li>
+
+          <li class="nav-item dropleft">
+
+              <a class="nav-link" data-toggle="dropdown">
+                  <span class="d-none d-lg-inline text-gray-600 small cm-strong profileName"><b>{{ request.user.profile.name }}</b></span>
+                  <i class="fa fa-ellipsis-v" aria-hidden="true" style="margin-left: 3px"></i>
+              </a>
+              <div class="dropdown-menu" style="margin-top: 30px">
+                      <h6 align="center"><b>Profile</b></h6>
+                <div class="dropdown-divider"></div>
+
+                     <a db_id="{{ item.id }}" class="dropdown-item d-flex align-items-center requestNotifItem" data-toggle="modal" data-target="#notificationRequest">
+
+                      <div class="mr-3">
+                        <div class="circle">
+
+                        </div>
+                      </div>
+                      <div>
+                        <div class="small text-gray-500">{{ item.created_on }}</div>
+                        <span class="font-weight-bold requestSubject">
+                            {{ item.code }}
+                        </span>
+                        <input class="requestContent" name="requestedSoT" type="hidden" value="{{ item.data }}">
+                      </div>
+                    </a>
+                    <div class="dropdown-divider"></div>
+                        <center>
+                            <a href="{% url 'logout' %}">
+                            <i class="fa fa-power-off" aria-hidden="true" style="margin-right: 8px"></i>
+                            Logout
+                            </a>
+                        </center>
+                    <div class="dropdown-divider"></div>
+              </div>
+          </li>
+
+          </ul>
+
+          {% comment %}End Notification Bell{% endcomment %}
+
+        </nav>
+        </div>
+        {% comment %}End of Top Nav Bar{% endcomment %}
+
+            {% comment %}Main Content{% endcomment %}
+            {% block content %}
+            {% endblock content %}
+
+
+        </div>
+       </div>
+       {% comment %}End of Main Row{% endcomment %}
+    </div>
+    {% comment %}End of Main Container{% endcomment %}
+
+{% comment %}HTML Scripts goes here{% endcomment %}
+
+</body>
+</html>

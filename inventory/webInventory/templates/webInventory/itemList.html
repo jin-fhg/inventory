@@ -1,0 +1,95 @@
+{% extends 'webInventory/base.html' %}
+
+{% block title %}Item List{% endblock title %}
+
+{% block header %}
+        {% load static %}
+             <link href="{% static 'webInventory/css/itemList.css' %}" rel="stylesheet" type="text/css">
+             <script src="{% static 'webInventory/js/itemList.js' %}"></script>
+{% endblock header %}
+
+{% block content %}
+    <div class="row" style="margin-top: 40px"   >
+        <div class="col-sm-1"></div>
+        <div class="col-sm-10 text-center">
+            <div class="card">
+                <div class="card-header">
+                    <h3>{{ folder.name }}</h3>
+                    <p align="left">Description: <blockquote align="left">{{ folder.description }}</blockquote></p>
+                </div>
+                <div class="card-body">
+                    <p align="left">
+                        <button class="btn btn-add addItem" data-toggle="modal" data-target="#addItem"><i class="fa fa-plus" aria-hidden="true"></i> Add</button>
+                    </p>
+                    <table class="table table-hover itemList">
+                        <thead>
+                            <th>Name</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Date Added</th>
+                            <th>Last Update</th>
+                        </thead>
+                        <tbody>
+                            {% for item in itemList %}
+                                <tr>
+                                    <td>
+                                        {{ item.name }}
+                                    </td>
+
+                                    <td>
+                                        {{ item.quantity }}
+                                    </td>
+
+                                    <td>
+                                        Php {{ item.price }}
+                                    </td>
+
+                                    <td>
+                                        {{ item.created_on }}
+                                    </td>
+                                     <td>
+                                        {{ item.last_update }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-1"></div>
+    </div>
+
+    <div class="modal fade" id="addItem" role="dialog">
+          <div class="modal-dialog">
+                <div class="modal-content">
+
+                      <!-- Modal Header -->
+                      <div class="modal-header">
+                        <h4 class="modal-title">Add New Item</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                      </div>
+
+                      <form class="form-inline d-flex justify-content-center" method="POST">
+                      <!-- Modal body -->
+                          <div class="modal-body">
+
+                                {% csrf_token %}
+                                <input type="text" name="name" class="form-control newItemField" placeholder="Name..." required>
+                                <input type="number" name="price" class="form-control newItemField" placeholder="Price..." required>
+                                <input type="number" name="quantity" class="form-control newItemField" placeholder="Quantity..." required>
+                                <input type="number" name="min-quantity" class="form-control newItemField" placeholder="Set Minimum Quantity...">
+                                <textarea cols="48" class="form-control newItemField" name="description" placeholder="Description..."></textarea>
+
+                          </div>
+
+                          <!-- Modal footer -->
+                          <div class="modal-footer">
+                            <button type="submit" class="btn btn-add" name="btnAddItem">Save</button>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                          </div>
+                      </form>
+                </div>
+          </div>
+    </div>
+{% endblock content %}

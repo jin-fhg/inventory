@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+body{
+    font-family: 'Roboto', Sans-Serif;
+}
+
+.cardContainer{
+    margin-top: 35px;
+    padding: 5px 20px;
+
+}
+.card{
+    box-shadow: 0px 0px  10px #848484;
+    border-left: 2px solid #285E70;
+}
+
+h5 {
+    margin: 0px 10px;
+    padding: 0px
+
+}
+
+.firstCard{
+    margin-left: 100px;
+}
+
+@media screen and (max-width: 1500px) {
+    .firstCard{
+        margin-left: 250px;
+    }
+    .secondCard{
+        margin-right: 100px;
+        margin-left: 250px;
+    }
+
+    .lastCard{
+        margin-right: 160px;
+
+    }
+
+
+    .col-sm-5{
+        margin-bottom: 15px;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    .firstCard{
+        margin-left: 0px;
+    }
+
+        .secondCard{
+        margin-right: 0px;
+        margin-left: 0px;
+    }
+
+    .lastCard{
+        margin-right: 0px;
+
+    }
+}

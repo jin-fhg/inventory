@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+body{
+    font-family: 'Roboto', Sans-Serif;
+}
+
+
+.card{
+    box-shadow: 0px 0px  8px #848484;
+    border-left: 2px solid #285E70;
+    margin: 10px;
+}
+
+
+.btn-add {
+    background-color: #285E70;
+    color: whitesmoke;
+    margin-left: 11px;
+}
+.btnEditDesc{
+    margin-left: 5px;
+}
+
+
+.txtEditName, .txtEditDesc{
+    display: none;
+}
+.txtEditName{
+    width: auto;
+    margin-bottom: 30px;
+}
+
+
+.warning{
+  background-color: #fff;
+  border-bottom: 2px solid red;
+}
+
+.descTitle{
+    margin-bottom: 0px;
+    font-weight: bold;
+}
+
+i{
+    color: white;
+}

@@ -1,0 +1,19 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+body{
+    font-family: 'Roboto', Sans-Serif;
+}
+
+.sideBar li{
+    margin-bottom: 30px;
+    border-bottom: 1px solid whitesmoke;
+}
+.bg-nav {
+    background-color: #285E70;
+}
+
+.profileName{
+    margin-top: 8px;
+    border-left: 1px solid #848484;
+    padding-left: 3px;
+}
