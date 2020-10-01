@@ -42,7 +42,7 @@
              <div class="card">
                  <div class="card-header">
                      <div class="d-flex justify-content-center">
-                         <h5>Stock Groups</h5> <i class="fas fa-archive"></i>
+                         <h5>Item Storage</h5> <i class="fas fa-archive"></i>
                      </div>
                  </div>
                  <div class="card-body">
@@ -129,31 +129,43 @@
             </div>
             <div class="card-body">
                 <div class="d-flex justify-content-center">
-                    <table class="table table-hover">
+                    <table class="table table-hover auditTable">
                         <thead>
-                            <th style="text-align: center">
-                                ---
-                            </th>
+                            <th>Activities</th>
+                            <th>Date</th>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>Test</td>
-                            </tr>
-                            <tr>
-                                <td>Test</td>
-                            </tr>
-                            <tr>
-                                <td>Test</td>
-                            </tr>
-                            <tr>
-                                <td>Test</td>
-                            </tr>
+                            {% for audit in audits %}
+                                <tr>
+
+                                        {% if audit.action == 'Login' or audit.action == 'Logout' %}
+                                        <td>
+                                            <p>{{ audit.profile_name }} {{ audit.action }} </p>
+                                        </td>
+                                        <td>{{ audit.created_on }} </td>
+
+                                        {% elif audit.action == 'Added' or audit.action == 'Deleted' %}
+                                            <td>
+                                            <p>{{ audit.profile_name }} {{ audit.action }} {{ audit.what }}</p>
+                                            </td>
+                                            <td>{{ audit.created_on }} </td>
+
+                                        {% elif audit.action == 'Updated' %}
+                                                <td>
+                                                    <p>{{ audit.profile_name }} {{ audit.action }} {{ audit.what }}  from {{ audit.action_from }} to {{ audit.action_to }}</p>
+                                                </td>
+                                                <td>{{ audit.created_on }} </td>
+
+                                        {% endif %}
+
+                                </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>
             </div>
             <div class="card-footer text-center">
-                <a href="#">View All Activities</a>
+                <a href="{% url 'auditTrail' %}">View All Activities</a>
             </div>
         </div>
     </div>
@@ -171,6 +183,7 @@
              console.log(data['barColors'])
              var horBar = new Chart($('#barChart'), {
                 type: 'horizontalBar',
+                minBarLength: 2,
                 "data":{
                     "labels": data['names'],
                     "datasets":[{"label":"Inventory Folders",
@@ -180,8 +193,10 @@
                         "borderWidth":1}]},
                 "options":{
                     "scales":{
-                        "yAxes":[
-                            {"ticks":{"beginAtZero":true}}]}}
+                        "xAxes":[
+                            {"ticks":{
+                                "beginAtZero":true
+                            }}]}}
                 });
 
 

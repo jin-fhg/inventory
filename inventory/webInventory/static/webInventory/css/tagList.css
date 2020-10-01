@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+body{
+    font-family: 'Roboto', Sans-Serif;
+
+}
+
+.card{
+    box-shadow: 0px 0px  10px #848484;
+    border-left: 2px solid #285E70;
+    width: 80%;
+    margin: 20px 120px;
+}
+
+.btn-add {
+    background-color: #285E70;
+    color: whitesmoke;
+    margin-left: 11px;
+}
+
+.dataTables_wrapper{
+    margin-top: 25px;
+}
+
+table th, td {
+    text-align: center;
+}
+
+input[type=search], select{
+    border-radius: 4px;
+    border: 1px solid gray;
+}
+input[type=search]:focus, select:focus{
+      outline-width: 0;
+}
+
+ul.no-bullets li
+{
+    list-style-type: none;
+}
+
+.txtEditTagName{
+    width: 70%;
+    display: none;
+    margin: 0 auto;
+}

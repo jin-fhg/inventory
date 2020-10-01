@@ -12,11 +12,15 @@ urlpatterns = [
     path('home/', views.index, name='home'),
     path('logout/', views.logout_view, name='logout'),
     path('list/', views.inventoryList, name='inventoryList'),
-    path('list/update/', views.updateFolder, name='updateFolder'),
     path('item-list/<pk>/', views.itemList, name='itemList'),
+    path('tag-list/', views.tagList, name='tagList'),
+    path('manage-users/', views.manageUsers, name='manageUsers'),
+    path('audit-trail/',views.auditTrail, name='auditTrail'),
 
-    #Json Responses
-    path('home/chart-format/', views.loadChart, name='loadChart')
+    #Json Responses and Ajaxes
+    path('home/chart-format/', views.loadChart, name='loadChart'),
+    path('list/update/', views.updateFolder, name='updateFolder'),
+    path('tag-list/update/', views.updateTagName, name='tagUpdate'),
 
 ]
 

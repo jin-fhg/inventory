@@ -1,9 +1,8 @@
 $(function (){
-    console.log("Item List")
-    /*Highhlight the current page in NavBar*/
+    console.log("Audit Trail")
+     /*Highhlight the current page in NavBar*/
     $('.nav-link').each(function(index){
-
-            if (index == 1) {
+            if (index == 0) {
                 $(this).addClass('active'); $(this).parents('li').addClass('active');
             }
     });
@@ -13,16 +12,17 @@ $(function (){
     $('.bodyNav').css('height', body)
     /*End Adjust side of SideBar*/
 
-    var viewItems = $('.itemList').DataTable({
+
+    var auditTrail = $('.auditTable').DataTable({
        bFilter: true,
        bInfo: false,
        bLengthChange: true,
        bSort: true,
        pageLength: 10,
-       language: { searchPlaceholder: "Names.."},
+       language: { searchPlaceholder: "Keywords.."},
        });
 
-    $('input[type=search]').add('select').on('focus', function (){
+    $('input[type=search], input[type=date]').add('select').on('focus', function (){
 
          $(this).css('border', '3px solid powderblue')
     });
@@ -32,11 +32,7 @@ $(function (){
     });
 
 
-    /*For Alert*/
-    $(".alert-success").fadeTo(2000, 500).slideUp(500, function(){
-       $(".alert-success").slideUp(500);
-    });
 
 
 
-});
+})

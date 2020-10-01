@@ -10,6 +10,15 @@
 
 
 {% block content %}
+    <div class="justify-content-center">
+        {% if messages %}
+            <ul class="alert no-bullets">
+                {% for message in messages %}
+                    <li class="alert alert-success"> {{ message }} </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
     <div class="row" style="margin-top: 15px">
         <div class="col-sm-1"></div>
         <div class="col-sm-10">
@@ -29,14 +38,16 @@
             </form>
         </div>
         <div class="col-sm-1"></div>
+
     </div>
     <div class="row text-center">
         <div class="col-sm-1"></div>
         <div class="col-sm-10">
           {% if folders %}
-          
+
                 {% for folder in folders %}
                     <div class="card itemFolder">
+                        <div class="card-header"></div>
                         <div class="card-body text-center">
                             <input type="text" class="form-control txtEditName" name="folderName" db_id="{{ folder.id }}">
                             <p class="card-text">
@@ -55,6 +66,7 @@
                           <i class="fa fa-trash-alt deleteOption" aria-hidden="true"  data-toggle="modal" data-target="#deleteOptionModal" db_id="{{ folder.id }}"></i>
                           </div>
                         </div>
+                        <div class="card-header"></div>
                     </div>
                 {% endfor %}
 

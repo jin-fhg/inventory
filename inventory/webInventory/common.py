@@ -1,4 +1,6 @@
 from .models import *
+import barcode
+from barcode.writer import ImageWriter
 
 #This is for the most common Functions
 
@@ -29,7 +31,7 @@ def AllFolderAndItems(option):
             itemCount = len((Item.objects.filter(itemFolder_id=folder['id'])))
             folder['countItems'] = itemCount
             folder['barColor'] = '#2DAF36'
-            folder['borderColor'] = '#3AB037'
+            folder['borderColor'] = '#285E70'
     elif option == 2:
         folder_id = []
         folder_names = []
@@ -42,7 +44,7 @@ def AllFolderAndItems(option):
             folder_names.append(x.name)
             itemCountList.append(itemCount)
             barColor.append('#2DAF36')
-            borderColor.append('#2DAF36')
+            borderColor.append('#285E70')
 
         folder_list = {
             'ids' : folder_id,
@@ -53,4 +55,17 @@ def AllFolderAndItems(option):
         }
 
     return folder_list
+
+
+#Ipagpaliban na muna
+#Generate barcode using Item tag and ITem ID. Format is EAN13
+def create_barcode(itemID):
+    ean13 = ''
+    manufacturer_number = ''
+    item = Item.objects.get(id=itemID)
+    barcode = manufacturer_number+item.sku
+    ean = barcode.get('ean13', barcode , writer=ImageWriter())
+    filename = ean.save('ean13')
+
+    return filename
 

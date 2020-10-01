@@ -21,3 +21,9 @@ input[type=search]:focus, select:focus{
 .newItemField{
     margin: 7px 9px;
 }
+
+
+ul.no-bullets li
+{
+    list-style-type: none;
+}

@@ -44,3 +44,13 @@ body{
 i{
     color: white;
 }
+
+.itemFolder{
+    width: 70%;
+    margin: 10px auto;
+}
+
+ul.no-bullets li
+{
+    list-style-type: none;
+}

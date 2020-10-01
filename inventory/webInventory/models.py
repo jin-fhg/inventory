@@ -30,6 +30,7 @@ class ItemFolder(models.Model):
 class Item(models.Model):
     itemFolder = models.ForeignKey(ItemFolder, on_delete=models.CASCADE, null= True, blank=True)
     name = models.CharField(max_length=60, null=True, blank=True)
+    sku = models.CharField(max_length=7, null=True, blank=True)
     barcode = models.BigIntegerField(null=True, blank=True, default=0)
     description = models.CharField(max_length=500, null=True, blank=True)
     price = models.DecimalField(max_digits= 12, decimal_places= 2, null=True, blank= True)
@@ -46,6 +47,7 @@ class Tag(models.Model):
     name = models.CharField(max_length=50, blank=True, null= True)
     created_on = models.DateTimeField(default=datetime.now)
     created_by = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=True, blank=True)
+    created_by_name = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -63,8 +65,22 @@ class AuditTrail(models.Model):
     how_many = models.CharField(max_length=100, blank=True, null= True)
     action_from = models.CharField(max_length=100, blank=True, null=True)
     action_to = models.CharField(max_length=100, blank=True, null=True)
-    profile = models.ForeignKey(Profile, on_delete= models.DO_NOTHING, null= True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, null= True,blank=True)
+    profile_name = models.CharField(max_length=100, null= True, blank=True)
     created_on = models.DateTimeField(default=datetime.now)
 
 
+class Role(models.Model):
+    name = models.CharField(max_length=100, null=True, blank=True)
 
+    def __str__(self):
+        return self.name
+
+
+class UserRole(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    role = models.ForeignKey(Role, on_delete=models.CASCADE)
+    created_on = models.DateTimeField(default=datetime.now)
+
+    def __str__(self):
+        return self.user.username + ' ' + self.role.name

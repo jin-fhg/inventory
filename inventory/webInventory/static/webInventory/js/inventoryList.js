@@ -89,5 +89,17 @@ $(function (){
            })
     });
 
+    $('.deleteOption').on('click', function (){
+        var db_id = $(this).attr('db_id')
+        $('.deleteOptionId').val(db_id)
+    })
+
+    /*For Alert*/
+    $(".alert-success").fadeTo(2000, 500).slideUp(500, function(){
+       $(".alert-success").slideUp(500);
+    });
+
+
+
 
 });
