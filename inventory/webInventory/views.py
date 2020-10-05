@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 import logging
+from django.contrib.auth.models import User, Group
 from django.contrib import messages
 from .models import Profile, ItemFolder, Item, Tag, ItemTag, AuditTrail
 from . import common
@@ -165,7 +166,22 @@ def tagList(request):
 
 @login_required
 def manageUsers(request):
-    return render(request, 'webInventory/manageUsers.html')
+    users = User.objects.all()
+    profiles_temp = []
+    profiles = []
+    for user in users:
+        profiles_temp.append(user.id)
+        profiles_temp.append(user.username)
+        profiles_temp.append(Profile.objects.get(user_id=user.id).name)
+        profiles_temp.append(Profile.objects.get(user_id=user.id).created_on)
+        profiles.append(profiles_temp)
+        profiles_temp = []
+
+    logger.error(profiles)
+    context = {
+        'users': profiles,
+    }
+    return render(request, 'webInventory/manageUsers.html', context)
 
 
 @login_required

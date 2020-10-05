@@ -13,6 +13,7 @@ class Profile(models.Model):
     phone = models.CharField(max_length=50, blank=True, null=True)
     alt_phone = models.CharField(max_length=50, blank=True, null=True)
     address = models.CharField(max_length=200, blank=True, null=True)
+    created_on = models.DateTimeField(default=datetime.now, null=True, blank=True)
 
     def __str__(self):
         return self.name
