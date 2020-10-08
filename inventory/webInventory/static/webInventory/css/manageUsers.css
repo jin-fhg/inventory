@@ -41,3 +41,11 @@ ul.no-bullets li
     color: whitesmoke;
     margin-left: 11px;
 }
+
+.form-control, .form-check-label{
+    margin-bottom: 20px;
+}
+
+input[type=checkbox]{
+    margin: 2px 5px;
+}

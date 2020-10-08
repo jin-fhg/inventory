@@ -44,4 +44,12 @@ $(function (){
 
     )
 
+    $('#setPass').on('click', function (){
+        if($(this).is(':checked')){
+            $('input[type=password]').slideToggle()
+        }else{
+            $('input[type=password]').slideToggle()
+        }
+    })
+
 })
