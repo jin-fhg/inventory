@@ -42,6 +42,13 @@
                                                     <p>{{ audit.profile_name }} {{ audit.action }} {{ audit.what }}</p>
                                                 </td>
                                                 <td>{{ audit.created_on }} </td>
+
+                                            {% elif audit.action == 'Created' %}
+                                            <td>
+                                            <p>{{ audit.profile_name }} {{ audit.action }} {{ audit.what }} {{ audit.action_from }}</p>
+                                            </td>
+                                            <td>{{ audit.created_on }} </td>
+
                                             {% elif audit.action == 'Updated' %}
                                                 <td>
                                                     <p>{{ audit.profile_name }} {{ audit.action }} {{ audit.what }}  from {{ audit.action_from }} to {{ audit.action_to }}</p>

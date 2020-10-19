@@ -34,7 +34,7 @@ $(function (){
         $(this).css('border', '')
     });
 
-    $('.btnEditName, .btnDelete').hover(
+    $('.btnEditName, .btnDelete, .btnReset').hover(
         function (){
         $(this).css('color', 'gray')
     },
@@ -47,9 +47,43 @@ $(function (){
     $('#setPass').on('click', function (){
         if($(this).is(':checked')){
             $('input[type=password]').slideToggle()
+            $('input[type=password]').attr('required', true);
         }else{
             $('input[type=password]').slideToggle()
+            $('input[type=password]').attr('required', false);
         }
     })
+
+    $(".alert-success, .alert-danger").fadeTo(2000, 500).slideUp(500, function(){
+       $(".alert-success, .alert-danger").slideUp(500);
+    });
+
+    //Passing ID for Delete
+    $('.btnDelete').on('click', function (){
+        db_id =$(this).closest('tr').find('.handleId').val()
+        $('.deleteOptionId').val(db_id)
+    })
+
+    //Passing ID for Edit
+    $('.btnEditName').on('click', function (){
+        db_id =$(this).closest('tr').find('.handleId').val()
+        $('.idHandlerUpdate').val(db_id)
+        $.ajax({
+            type: 'GET',
+            url: 'profile/',
+            data: {
+                id: db_id,
+            },
+            success: function (data){
+                $('.userName').text(data['uname'])
+                $('.profileName').val(data['name'])
+                $('.profileAddress').val(data['address'])
+                $('.profilePhone').val(data['phone'])
+                $('.profileEmail').val(data['email'])
+            }
+
+        })
+    });
+
 
 })

@@ -47,29 +47,15 @@
                       </span>
                   </div>
 
-                 <input type="text" class="form-control logCred" name="uname" placeholder="Username">
+                 <input type="email" class="form-control logCred" name="email" placeholder="Email Address" required id="id_email">
                </div>
-
-               <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">
-                            <i class="fas fa-lock" aria-hidden="true"></i>
-                        </span>
-                    </div>
-                   <input type="password" class="form-control logCred" name="pword" placeholder="Password">
-               </div>
-
-                <div class="checkbox">
-                        <label><input type="checkbox" name="remember"> Remember me</label>
-                </div>
 
                 <div class="loginbtn">
-                <button type="submit" class="btn btn-success"><i class="fas fa-sign-in-alt loginIcon"></i> Login</button>
+                <button type="submit" class="btn btn-success"><i class="fas fa-sign-in-alt loginIcon"></i> Submit</button>
                 </div>
 
 
             </form>
-              <a href="{% url 'reset_password' %}">Forgot Password?</a>
           </div>
         </div>
 

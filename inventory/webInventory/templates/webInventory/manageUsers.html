@@ -19,16 +19,20 @@
               <div class="card-body">
                 {% csrf_token %}
                 <input class="form-control" type="text" placeholder="Username..." name="UserName" required>
-
+                <label class="form-check-label">
+                    <input type="checkbox" id="isAdmin" name="isAdmin" value="setPass" checked>Is Admin
+                </label>
                 <label class="form-check-label">
                     <input type="checkbox" id="setPass" name="setPass" value="setPass" checked>Set Password
                 </label>
 
                 <input class="form-control" type="password" placeholder="Password..." name="password" required>
                 <input class="form-control" type="password" placeholder="Password Confirm..." name="password2" required>
-                <input class="form-control" type="text" placeholder="Last Name First Name M.I." name="UserName" required>
-                  <input class="form-control" type="email" placeholder="email@example.com" name="email" required>
-                <button type="submit" class="btn btn-add" name="addTag">Save</button>
+                <input class="form-control" type="text" placeholder="Last Name First Name M.I." name="ProfName" required>
+                <input class="form-control" type="text" placeholder="Street Address, Barangay, City/Province, PostCode" name="address">
+                <input class="form-control" type="tel" type="tel" name="phone" placeholder="000-000-0000"  required>
+                <input class="form-control" type="email" placeholder="email@example.com" name="email" required>
+                <button type="submit" class="btn btn-add" name="addUser">Save</button>
               </div>
           </div>
         </form>
@@ -37,7 +41,11 @@
     {% if messages %}
         <ul class="alert no-bullets">
             {% for message in messages %}
-                <li class="alert alert-success"> {{ message }} </li>
+                {% if message.tags == "success" %}
+                    <li class="alert alert-success"> {{ message }} </li>
+                {% else %}
+                    <li class="alert alert-danger"> {{ message }} </li>
+                {% endif %}
             {% endfor %}
         </ul>
     {% endif %}
@@ -46,6 +54,7 @@
             <thead>
                 <th>Username</th>
                 <th>Name</th>
+                <th>Status</th>
                 <th>Created On</th>
                 <th>Action</th>
             </thead>
@@ -54,16 +63,23 @@
                     {% if not user.0 == 1 %}
                         <tr>
                             <td>
-                                <input type="hidden" name="UserID" value="{{ user.0 }}">
+                                <input class="handleId" type="hidden" name="UserID" value="{{ user.0 }}">
                                <p> {{ user.1 }} </p>
                             </td>
                             <td>{{ user.2 }}</td>
-                            <td>{{ user.3 }}</td>
 
+                            {% if user.3 == True %}
+                                <td>Active</td>
+                            {% else %}
+                                <td>Inactive</td>
+                            {% endif %}
+
+                            <td>{{ user.4 }}</td>
                             <td>
                                {% if not request.user.id == user.0 %}
-                                    <i class="fa fa-pencil-square-o btnEditName" aria-hidden="true"></i>
+                                    <i class="fa fa-pencil-square-o btnEditName" aria-hidden="true" data-toggle="modal" data-target="#modalEdit"></i>
                                     <i class="fa fa-trash-alt btnDelete" aria-hidden="true" data-toggle="modal" data-target="#deleteOptionModal"></i>
+                                    <i class="fa fa-key btnReset" aria-hidden="true"></i>
                                {% endif %}
                             </td>
                         </tr>
@@ -72,5 +88,62 @@
             </tbody>
         </table>
     </div>
+
+        <div id="deleteOptionModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                      <div class="modal-header">
+                          <h5 class="">Delete</h5>
+                          <button type="button" class="close" data-dismiss="modal">&times;</button>
+                      </div>
+                     <form method="POST">
+                       {% csrf_token %}
+                          <div class="modal-body text-center">
+                              <p>Are you sure you want to delete this User?</p>
+                              <input type="hidden" name="deleteOptionId" class="deleteOptionId">
+                          </div>
+
+                          <div class="modal-footer">
+                                <button type="submit" class="btn btn-add saveDeleteOption" name="saveDeleteOption" id="saveDeleteOption">Yes</button>
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+                          </div>
+                      </form>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="modalEdit" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="">Update Information</h5>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <form method="POST">
+
+                            <div class="modal-body">
+                                {% csrf_token %}
+
+                                <h3 type="text" class="userName"></h3>
+                                <input class="idHandlerUpdate" type="hidden" name="db_id">
+                                <input type="text" name="profileName" class="form-control profileName">
+                                <input type="text" name="profileAddress" class="form-control profileAddress">
+                                <input type="text" name="profilePhone" class="form-control profilePhone">
+                                <input type="text" name="profileEmail" class="form-control profileEmail">
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-add saveUpdate" name="saveUpdate" id="saveUpdate">Update</button>
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                            </div>
+                        </form>
+
+                </div>
+            </div>
+        </div>
+
 </div>
 {% endblock content %}

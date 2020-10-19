@@ -66,7 +66,7 @@ class AuditTrail(models.Model):
     how_many = models.CharField(max_length=100, blank=True, null= True)
     action_from = models.CharField(max_length=100, blank=True, null=True)
     action_to = models.CharField(max_length=100, blank=True, null=True)
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, null= True,blank=True)
+    user_id = models.CharField(max_length=100, blank=True, null=True)
     profile_name = models.CharField(max_length=100, null= True, blank=True)
     created_on = models.DateTimeField(default=datetime.now)
 

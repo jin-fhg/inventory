@@ -1,14 +1,24 @@
 from django.shortcuts import render, redirect, HttpResponse
+
 from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 import logging
 from django.contrib.auth.models import User, Group
 from django.contrib import messages
-from .models import Profile, ItemFolder, Item, Tag, ItemTag, AuditTrail
+from .models import Profile, ItemFolder, Item, Tag, ItemTag, AuditTrail, Role, UserRole
 from . import common
 from datetime import datetime
 import json
+
+#Email User Activation
+from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from .tokens import account_activation_token
+from django.utils.encoding import force_bytes, force_text
+from django.core.mail import EmailMessage
+
 # Create your views here.
 
 logger = logging.getLogger(__name__)
@@ -19,7 +29,7 @@ def login_view(request):
         user = authenticate(request, username=request.POST['uname'], password=request.POST['pword'])
         if user is not None:
             login(request, user)
-            AuditTrail.objects.create(action='Login', user_id = request.user.id, profile_name = request.user.profile.name)
+            AuditTrail.objects.create(action='Login', profile_name = request.user.profile.name)
             if not 'remember' in request.POST:
                 request.session.set_expiry(0)
             return redirect('home')
@@ -166,6 +176,91 @@ def tagList(request):
 
 @login_required
 def manageUsers(request):
+
+    if request.method == 'POST':
+        logger.error(request.POST)
+        if 'addUser' in request.POST:
+            if not User.objects.filter(username=request.POST['UserName']).exists():
+                if 'setPass' in request.POST:
+                    if request.POST['password'] == request.POST['password2']:
+                        newUser = User.objects.create_user(request.POST['UserName'],
+                                                           request.POST['email'], request.POST['password'])
+                        newUser.is_staff = False
+                        newUser.is_superuser = False
+                        newUser.is_active = True
+                        newUser.save()
+
+                    messages.success(request, f'New User Named: ' + newUser.username + 'is created.')
+
+                else:
+                    logger.error("Sending Email")
+                    newUser = User.objects.create_user(request.POST['UserName'],
+                                                       request.POST['email'], 'Password100')
+                    newUser.is_staff = False
+                    newUser.is_superuser = False
+                    newUser.is_active = False
+                    newUser.save()
+                    current_site = get_current_site(request)
+                    mail_subject = 'Activate your Account.'
+                    message = render_to_string('webInventory/acc_active_email.html', {
+                        'user': newUser,
+                        'domain': current_site.domain,
+                        'uid': urlsafe_base64_encode(force_bytes(newUser.id)),
+                        'token': account_activation_token.make_token(newUser),
+                    })
+                    email = EmailMessage(
+                        mail_subject, message, 'spielshopper@gmail.com', [newUser.email],
+                    )
+                    email.send()
+                    logger.error("Email Sent")
+                    logger.error(newUser.email)
+
+                    messages.success(request, f'An Email has been sent to' + newUser.email + 'to activate his Account')
+
+                newProfile = Profile.objects.create(name=request.POST['ProfName'],
+                                                    address=request.POST['address'],
+                                                    phone=request.POST['phone'],
+                                                    email=request.POST['email'],
+                                                    user_id=newUser.id)
+
+                AuditTrail.objects.create(action='Created', what='User',
+                                          action_from='UserName:' + newUser.username +
+                                                      ' Profile:' + newProfile.name,
+                                          profile_name=request.user.profile.name,
+                                          user_id=request.user.id)
+
+                if 'isAdmin' in request.POST:
+                    role = UserRole.objects.create(role_id=1, user_id=newUser.id)
+                else:
+                    role = UserRole.objects.create(role_id=2, user_id=newUser.id)
+
+                return redirect('manageUsers')
+
+            else:
+                messages.error(request, f'User '+ request.POST['UserName'] +' already exists')
+                return redirect('manageUsers')
+        elif 'saveDeleteOption' in request.POST:
+            try:
+                user = User.objects.get(id=request.POST['deleteOptionId'])
+                user.delete()
+                messages.success(request, f'User Deleted Successfully')
+                return redirect('manageUsers')
+            except(User.DoesNotExist):
+                messages.error(request, f'User No Longer Exists')
+        elif 'saveUpdate' in request.POST:
+            try:
+                profile = Profile.objects.get(user_id=request.POST['db_id'])
+                profile.name = request.POST['profileName']
+                profile.address = request.POST['profileAddress']
+                profile.phone = request.POST['profilePhone']
+                profile.email = request.POST['profileEmail']
+                profile.save()
+                messages.success(request, f'User Profile Updated Successfully')
+                return redirect('manageUsers')
+            except(Profile.DoesNotExist):
+                messages.error(request, f'Error Occured: User No Longer Exists')
+
+
     users = User.objects.all()
     profiles_temp = []
     profiles = []
@@ -173,15 +268,36 @@ def manageUsers(request):
         profiles_temp.append(user.id)
         profiles_temp.append(user.username)
         profiles_temp.append(Profile.objects.get(user_id=user.id).name)
+        profiles_temp.append(user.is_active)
         profiles_temp.append(Profile.objects.get(user_id=user.id).created_on)
         profiles.append(profiles_temp)
         profiles_temp = []
 
     logger.error(profiles)
+
+
+
     context = {
         'users': profiles,
     }
     return render(request, 'webInventory/manageUsers.html', context)
+
+
+def activate(request, uidb64, token):
+    try:
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    if user is not None and account_activation_token.check_token(user, token):
+        user.is_active = True
+        user.save()
+        login(request, user)
+        # return redirect('home')
+        return redirect('home')
+    else:
+        return HttpResponse('Activation link is invalid!')
+
 
 
 @login_required
@@ -260,4 +376,18 @@ def updateTagName(request):
 @login_required
 def loadChart(request, *args, **kwargs):
     data = common.AllFolderAndItems(2)
+    return JsonResponse(data)
+
+@login_required
+def profileUpdate(request):
+    user = User.objects.get(id=request.GET.get('id'))
+    logger.error(user.profile.name)
+
+    data = {
+        'uname': user.username,
+        'name': user.profile.name,
+        'address': user.profile.address,
+        'phone': user.profile.phone,
+        'email': user.profile.email,
+    }
     return JsonResponse(data)
