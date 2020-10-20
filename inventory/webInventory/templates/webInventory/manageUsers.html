@@ -79,7 +79,12 @@
                                {% if not request.user.id == user.0 %}
                                     <i class="fa fa-pencil-square-o btnEditName" aria-hidden="true" data-toggle="modal" data-target="#modalEdit"></i>
                                     <i class="fa fa-trash-alt btnDelete" aria-hidden="true" data-toggle="modal" data-target="#deleteOptionModal"></i>
-                                    <i class="fa fa-key btnReset" aria-hidden="true"></i>
+                                    <i class="fa fa-key btnReset" aria-hidden="true" data-toggle="modal" data-target="#passReset"></i>
+                                    {% if user.3 == True %}
+                                        <i class="fa fa-lock" aria-hidden="true"></i>
+                                    {% else %}
+                                        <i class="fa fa-unlock" aria-hidden="true"></i>
+                                    {% endif %}
                                {% endif %}
                             </td>
                         </tr>
@@ -142,6 +147,22 @@
                         </form>
 
                 </div>
+            </div>
+        </div>
+
+        <div id="passReset" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                          <div class="modal-body text-center">
+                              <p class="resetMessage">Loading....</p>
+                              <input type="hidden" name="deleteOptionId" class="deleteOptionId">
+                          </div>
+                          <div class="modal-footer" style="display: none">
+                                <button type="button" class="btn btn-add" data-dismiss="modal">OK</button>
+                          </div>
+                </div>
+
             </div>
         </div>
 

@@ -212,10 +212,8 @@ def manageUsers(request):
                         mail_subject, message, 'spielshopper@gmail.com', [newUser.email],
                     )
                     email.send()
-                    logger.error("Email Sent")
-                    logger.error(newUser.email)
 
-                    messages.success(request, f'An Email has been sent to' + newUser.email + 'to activate his Account')
+                    messages.success(request, f'An Email has been sent to ' + newUser.email + ' to activate his Account')
 
                 newProfile = Profile.objects.create(name=request.POST['ProfName'],
                                                     address=request.POST['address'],
@@ -294,11 +292,22 @@ def activate(request, uidb64, token):
         user.save()
         login(request, user)
         # return redirect('home')
-        return redirect('home')
+        return redirect('password-setup')
     else:
         return HttpResponse('Activation link is invalid!')
 
+@login_required
+def passwordSetup(request):
+    if request.method == 'POST':
+        if request.POST['pword'] == request.POST['pword2']:
+            request.user.set_password(request.POST['pword2'])
+            request.user.save()
+            messages.success(request, f'Password Setup Successful. Please Login.')
+            return redirect('home')
+        else:
+            messages.error(request, f'Password does not match. Please try again.')
 
+    return render(request, 'webInventory/passwordSetup.html')
 
 @login_required
 def auditTrail(request):
@@ -389,5 +398,43 @@ def profileUpdate(request):
         'address': user.profile.address,
         'phone': user.profile.phone,
         'email': user.profile.email,
+    }
+    return JsonResponse(data)
+
+#This is the method when the admin tries to reset another user's password
+@login_required
+def resetPass(request):
+    user = User.objects.get(id=request.GET.get('id'))
+    logger.error(user.profile.name)
+    current_site = get_current_site(request)
+    mail_subject = 'Password Reset'
+    message = render_to_string('webInventory/passreset-admin.html', {
+        'user': user,
+        'domain': current_site.domain,
+        'uid': urlsafe_base64_encode(force_bytes(user.id)),
+        'token': account_activation_token.make_token(user),
+    })
+    email = EmailMessage(
+        mail_subject, message, 'spielshopper@gmail.com', [user.email],
+    )
+    email.send()
+
+    data = {
+        'email': user.profile.email
+    }
+    return JsonResponse(data)
+
+@login_required
+def deactivateUser(request):
+    if request.method == 'POST':
+        user = User.objects.get(id=request.POST['id'])
+        if user.is_active:
+            user.is_active = False
+            status = "Inactive"
+        else:
+            user.is_active = True
+            status = "Active"
+    data = {
+        'status': status
     }
     return JsonResponse(data)

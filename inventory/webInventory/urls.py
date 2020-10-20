@@ -17,6 +17,7 @@ urlpatterns = [
     path('tag-list/', views.tagList, name='tagList'),
     path('manage-users/', views.manageUsers, name='manageUsers'),
     path('audit-trail/',views.auditTrail, name='auditTrail'),
+    path('password-setup/', views.passwordSetup, name='password-setup'),
     path('activate/<slug:uidb64>/<slug:token>/',
          views.activate, name='activate'),
 
@@ -25,6 +26,7 @@ urlpatterns = [
     path('list/update/', views.updateFolder, name='updateFolder'),
     path('tag-list/update/', views.updateTagName, name='tagUpdate'),
     path('manage-users/profile/', views.profileUpdate, name='viewProfile'),
+    path('manage-users/reset/', views.resetPass, name='adminpass-reset'),
 
     #Password Reset
 
@@ -32,7 +34,9 @@ urlpatterns = [
         template_name='webInventory/passReset/passReset.html'), #Get User Email
          name='reset_password'),
 
-    path('password-reset-done/', auth_views.PasswordResetDoneView.as_view(),
+    path('password-reset-done/', auth_views.PasswordResetDoneView.as_view(
+        template_name='webInventory/passReset/passResetDone.html'
+    ),
          name='password_reset_done'), #Success Message After Submit Email
 
     path('password/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(),

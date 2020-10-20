@@ -85,5 +85,23 @@ $(function (){
         })
     });
 
+    $('.btnReset').on('click', function(){
+        $('.resetMessage').text("Loading...")
+        $('.modal-footer').css('display', 'none')
+        db_id =$(this).closest('tr').find('.handleId').val()
+        $.ajax({
+            type: 'GET',
+            url: 'reset/',
+            data: {
+                id: db_id
+            },
+            success: function(data){
+                console.log("Email Sent to " + data.email)
+                $('.resetMessage').text("Password Reset Email was Successfully Sent to " + data.email)
+                $('.modal-footer').css('display', 'block')
+            },
+        })
+    });
+
 
 })

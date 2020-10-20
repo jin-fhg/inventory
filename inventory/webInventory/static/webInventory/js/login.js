@@ -16,4 +16,12 @@ $(function (){
 
     });
 
+    //For Set Password
+    $('.pword2').keyup(function (){
+        if($(this).val() !== $('.pword').val()){
+            console.log("Password Does not Match")
+        }
+
+    })
+
 });
