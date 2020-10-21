@@ -1,0 +1,37 @@
+{% extends 'webInventory/passReset/passResetBase.html' %}
+
+{% block title %}Reset Password{% endblock title %}
+
+{% block content %}
+    <form class="form" method="POST">
+                {% csrf_token %}
+               <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                      <span class="input-group-text">
+                          <i class="fas fa-lock" aria-hidden="true"></i>
+                      </span>
+                  </div>
+
+                 <input type="password" class="form-control logCred pword" name="new_password1" autocomplete="new-password"
+                        placeholder="New Password" required id="id_new_password1">
+               </div>
+
+               <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="fas fa-lock" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                   <input type="password" class="form-control logCred pword2" name="new_password2"
+                          autocomplete="new-password" placeholder="Confirm Password"
+                          required id="id_new_password2">
+               </div>
+
+
+                <div class="loginbtn">
+                <button type="submit" class="btn btn-success"><i class="fas fa-sign-in-alt loginIcon"></i> Reset</button>
+                </div>
+
+
+            </form>
+{% endblock content %}

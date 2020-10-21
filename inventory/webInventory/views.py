@@ -36,6 +36,8 @@ def login_view(request):
         else:
             messages.error(request, f'Login Failed. Incorrect Username or Password.')
             return redirect('login')
+    else:
+        messages.error(request, f'Please Login')
     return render(request, 'webInventory/login.html')
 
 def logout_view(request):
@@ -181,59 +183,66 @@ def manageUsers(request):
         logger.error(request.POST)
         if 'addUser' in request.POST:
             if not User.objects.filter(username=request.POST['UserName']).exists():
-                if 'setPass' in request.POST:
-                    if request.POST['password'] == request.POST['password2']:
+                if not User.objects.filter(email=request.POST['email']).exists():
+                    if 'setPass' in request.POST:
+                        if not len(request.POST['password']) < 8:
+                            if request.POST['password'] == request.POST['password2']:
+                                newUser = User.objects.create_user(request.POST['UserName'],
+                                                                   request.POST['email'], request.POST['password'])
+                                newUser.is_staff = False
+                                newUser.is_superuser = False
+                                newUser.is_active = True
+                                newUser.save()
+
+                            messages.success(request, f'New User Named: ' + newUser.username + ' is created.')
+                        else:
+                            messages.error(request, f'Password is too short. It should be at least 8 characters')
+                            return redirect('manageUsers')
+
+                    else:
+                        logger.error("Sending Email")
                         newUser = User.objects.create_user(request.POST['UserName'],
-                                                           request.POST['email'], request.POST['password'])
+                                                           request.POST['email'], 'Password100')
                         newUser.is_staff = False
                         newUser.is_superuser = False
-                        newUser.is_active = True
+                        newUser.is_active = False
                         newUser.save()
+                        current_site = get_current_site(request)
+                        mail_subject = 'Activate your Account.'
+                        message = render_to_string('webInventory/acc_active_email.html', {
+                            'user': newUser,
+                            'domain': current_site.domain,
+                            'uid': urlsafe_base64_encode(force_bytes(newUser.id)),
+                            'token': account_activation_token.make_token(newUser),
+                        })
+                        email = EmailMessage(
+                            mail_subject, message, 'spielshopper@gmail.com', [newUser.email],
+                        )
+                        email.send()
 
-                    messages.success(request, f'New User Named: ' + newUser.username + 'is created.')
+                        messages.success(request, f'An Email has been sent to ' + newUser.email + ' to activate his Account')
 
+                    newProfile = Profile.objects.create(name=request.POST['ProfName'],
+                                                        address=request.POST['address'],
+                                                        phone=request.POST['phone'],
+                                                        email=request.POST['email'],
+                                                        user_id=newUser.id)
+
+                    AuditTrail.objects.create(action='Created', what='User',
+                                              action_from='UserName:' + newUser.username +
+                                                          ' Profile:' + newProfile.name,
+                                              profile_name=request.user.profile.name,
+                                              user_id=request.user.id)
+
+                    if 'isAdmin' in request.POST:
+                        role = UserRole.objects.create(role_id=1, user_id=newUser.id)
+                    else:
+                        role = UserRole.objects.create(role_id=2, user_id=newUser.id)
+
+                    return redirect('manageUsers')
                 else:
-                    logger.error("Sending Email")
-                    newUser = User.objects.create_user(request.POST['UserName'],
-                                                       request.POST['email'], 'Password100')
-                    newUser.is_staff = False
-                    newUser.is_superuser = False
-                    newUser.is_active = False
-                    newUser.save()
-                    current_site = get_current_site(request)
-                    mail_subject = 'Activate your Account.'
-                    message = render_to_string('webInventory/acc_active_email.html', {
-                        'user': newUser,
-                        'domain': current_site.domain,
-                        'uid': urlsafe_base64_encode(force_bytes(newUser.id)),
-                        'token': account_activation_token.make_token(newUser),
-                    })
-                    email = EmailMessage(
-                        mail_subject, message, 'spielshopper@gmail.com', [newUser.email],
-                    )
-                    email.send()
-
-                    messages.success(request, f'An Email has been sent to ' + newUser.email + ' to activate his Account')
-
-                newProfile = Profile.objects.create(name=request.POST['ProfName'],
-                                                    address=request.POST['address'],
-                                                    phone=request.POST['phone'],
-                                                    email=request.POST['email'],
-                                                    user_id=newUser.id)
-
-                AuditTrail.objects.create(action='Created', what='User',
-                                          action_from='UserName:' + newUser.username +
-                                                      ' Profile:' + newProfile.name,
-                                          profile_name=request.user.profile.name,
-                                          user_id=request.user.id)
-
-                if 'isAdmin' in request.POST:
-                    role = UserRole.objects.create(role_id=1, user_id=newUser.id)
-                else:
-                    role = UserRole.objects.create(role_id=2, user_id=newUser.id)
-
-                return redirect('manageUsers')
-
+                    messages.error(request, f'User with email ' + request.POST['email'] + ' already exists')
+                    return redirect('manageUsers')
             else:
                 messages.error(request, f'User '+ request.POST['UserName'] +' already exists')
                 return redirect('manageUsers')
@@ -247,12 +256,15 @@ def manageUsers(request):
                 messages.error(request, f'User No Longer Exists')
         elif 'saveUpdate' in request.POST:
             try:
+                user = User.objects.get(id=request.POST['db_id'])
                 profile = Profile.objects.get(user_id=request.POST['db_id'])
                 profile.name = request.POST['profileName']
                 profile.address = request.POST['profileAddress']
                 profile.phone = request.POST['profilePhone']
                 profile.email = request.POST['profileEmail']
+                user.email = request.POST['profileEmail']
                 profile.save()
+                user.save()
                 messages.success(request, f'User Profile Updated Successfully')
                 return redirect('manageUsers')
             except(Profile.DoesNotExist):
@@ -430,10 +442,12 @@ def deactivateUser(request):
         user = User.objects.get(id=request.POST['id'])
         if user.is_active:
             user.is_active = False
-            status = "Inactive"
+            user.save()
+            status = "User is now Inactive"
         else:
             user.is_active = True
-            status = "Active"
+            user.save()
+            status = "User is now Active"
     data = {
         'status': status
     }

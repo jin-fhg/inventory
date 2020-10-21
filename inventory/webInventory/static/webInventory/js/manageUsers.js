@@ -104,4 +104,50 @@ $(function (){
     });
 
 
+    $('.disableUser').on('click', function(){
+        db_id =$(this).closest('tr').find('.handleId').val()
+        var csrfmiddlewaretoken = $(this).closest('tr').find('input[name=csrfmiddlewaretoken]').val();
+
+        $.ajax({
+            type: 'POST',
+            url: 'disable/',
+            data: {
+                id: db_id,
+                csrfmiddlewaretoken: csrfmiddlewaretoken,
+            },
+            success: function(data){
+                console.log(data)
+                location.reload();
+            },
+        })
+    })
+
+    //For Set Password
+
+    $('.pword').keyup(function (){
+        if($(this).val().length < 8 ){
+            console.log("Password is too short")
+            $('.errors').text("Password is too short. It should be atleast 8 characters")
+            $('.btnreset').attr('disabled', true)
+        }else{
+            $('.errors').text("")
+            $('.btnreset').attr('disabled', false)
+        }
+
+    })
+
+    $('.pword2').keyup(function (){
+        if($(this).val() !== $('.pword').val()){
+            console.log("Password Does not Match")
+            $('.errors').text("Password Does not Match")
+
+        }else{
+            $('.errors').text("")
+
+        }
+
+    })
+
+
+
 })

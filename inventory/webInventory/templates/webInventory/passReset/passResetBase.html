@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Set Password</title>
+    <title>{% block title %} {% endblock title %}</title>
 
         {% load static %}
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -34,42 +34,12 @@
             {% if messages %}
                 <ul class="alert no-bullets">
                     {% for message in messages %}
-                        {% if message.tags == "success" %}
-                             <li class="alert alert-success"> {{ message }} </li>
-                        {% else %}
-                            <li class="alert alert-danger"> {{ message }} </li>
-                        {% endif %}
+                        <li class="alert alert-danger"> {{ message }} </li>
                     {% endfor %}
                 </ul>
             {% endif %}
-            <form class="form" method="POST">
-                {% csrf_token %}
-               <div class="input-group mb-3">
-                  <div class="input-group-prepend">
-                      <span class="input-group-text">
-                          <i class="fas fa-lock" aria-hidden="true"></i>
-                      </span>
-                  </div>
-
-                 <input type="password" class="form-control logCred pword" name="pword" placeholder="New Password">
-               </div>
-
-               <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">
-                            <i class="fas fa-lock" aria-hidden="true"></i>
-                        </span>
-                    </div>
-                   <input type="password" class="form-control logCred pword2" name="pword2" placeholder="Confirm Password">
-               </div>
-
-                <span class="text-danger errors"></span>
-                <div class="loginbtn">
-                <button type="submit" class="btn btn-success btnreset"><i class="fas fa-sign-in-alt loginIcon"></i>Reset</button>
-                </div>
-
-
-            </form>
+            {% block content %}
+            {% endblock content %}
           </div>
         </div>
 

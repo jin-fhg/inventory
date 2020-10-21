@@ -26,8 +26,10 @@
                     <input type="checkbox" id="setPass" name="setPass" value="setPass" checked>Set Password
                 </label>
 
-                <input class="form-control" type="password" placeholder="Password..." name="password" required>
-                <input class="form-control" type="password" placeholder="Password Confirm..." name="password2" required>
+                <input class="form-control pword" type="password" placeholder="Password..." name="password" required>
+                <span class="text-danger errors"></span>
+                <input class="form-control pword2" type="password" placeholder="Password Confirm..." name="password2" required>
+
                 <input class="form-control" type="text" placeholder="Last Name First Name M.I." name="ProfName" required>
                 <input class="form-control" type="text" placeholder="Street Address, Barangay, City/Province, PostCode" name="address">
                 <input class="form-control" type="tel" type="tel" name="phone" placeholder="000-000-0000"  required>
@@ -63,6 +65,7 @@
                     {% if not user.0 == 1 %}
                         <tr>
                             <td>
+                                {% csrf_token %}
                                 <input class="handleId" type="hidden" name="UserID" value="{{ user.0 }}">
                                <p> {{ user.1 }} </p>
                             </td>
@@ -77,13 +80,13 @@
                             <td>{{ user.4 }}</td>
                             <td>
                                {% if not request.user.id == user.0 %}
-                                    <i class="fa fa-pencil-square-o btnEditName" aria-hidden="true" data-toggle="modal" data-target="#modalEdit"></i>
-                                    <i class="fa fa-trash-alt btnDelete" aria-hidden="true" data-toggle="modal" data-target="#deleteOptionModal"></i>
-                                    <i class="fa fa-key btnReset" aria-hidden="true" data-toggle="modal" data-target="#passReset"></i>
+                                    <i class="btn fa fa-pencil-square-o btnEditName" aria-hidden="true" data-toggle="modal" data-target="#modalEdit"></i>
+                                    <i class="btn fa fa-trash-alt btnDelete" aria-hidden="true" data-toggle="modal" data-target="#deleteOptionModal"></i>
+                                    <i class="btn fa fa-key btnReset" aria-hidden="true" data-toggle="modal" data-target="#passReset"></i>
                                     {% if user.3 == True %}
-                                        <i class="fa fa-lock" aria-hidden="true"></i>
+                                        <i class="btn fa fa-lock disableUser" aria-hidden="true"></i>
                                     {% else %}
-                                        <i class="fa fa-unlock" aria-hidden="true"></i>
+                                        <i class="btn fa fa-unlock disableUser" aria-hidden="true"></i>
                                     {% endif %}
                                {% endif %}
                             </td>

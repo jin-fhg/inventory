@@ -1,0 +1,9 @@
+{% extends 'webInventory/passReset/passResetBase.html' %}
+
+{% block title %}Email Sent{% endblock title %}
+
+{% block content %}
+      <h5 style="color: white">Password Reset was Successful. Click the Link below to Login.</h5>
+      <a href="{% url 'login' %}">Back to Login?</a>
+
+{% endblock content %}

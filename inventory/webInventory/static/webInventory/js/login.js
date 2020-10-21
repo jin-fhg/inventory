@@ -17,9 +17,27 @@ $(function (){
     });
 
     //For Set Password
+
+    $('.pword').keyup(function (){
+        if($(this).val().length < 8 ){
+            console.log("Password is too short")
+            $('.errors').text("Password is too short. It should be atleast 8 characters")
+            $('.btnreset').attr('disabled', true)
+        }else{
+            $('.errors').text("")
+            $('.btnreset').attr('disabled', false)
+        }
+
+    })
+
     $('.pword2').keyup(function (){
         if($(this).val() !== $('.pword').val()){
             console.log("Password Does not Match")
+            $('.errors').text("Password Does not Match")
+            $('.btnreset').attr('disabled', true)
+        }else{
+            $('.errors').text("")
+            $('.btnreset').attr('disabled', false)
         }
 
     })

@@ -1,43 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Login</title>
+{% extends 'webInventory/passReset/passResetBase.html' %}
 
-        {% load static %}
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <!-- Popper JS -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-        <!-- Latest compiled JavaScript -->
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+{% block title %}Email Sent{% endblock title %}
 
-        <!--Data Tables-->
-        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css">
-        <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
-        <!--FontAwesome Icons-->
-        <script src="https://kit.fontawesome.com/a8e4c70d24.js" crossorigin="anonymous"></script>
-
-        <!--Local JS and CSS-->
-        <link href="{% static 'webInventory/css/login.css' %}" rel="stylesheet" type="text/css">
-        <script src="{% static 'webInventory/js/login.js' %}"></script>
-</head>
-<body>
-    <div class="container">
-        <div class="col-sm-12 modal-dialog text-center main-wrapper">
-          <div class="col-sm-10 modal-content">
-              <div class="col-sm-12 companyLogo">
-                  <img src="{% static 'webInventory/static/logo.png' %}" class="logoImg">
-              </div>
-
-               <h5 style="color: white">An Email has been sent to the user to Reset his/her Password.</h5>
+{% block content %}
+      <h5 style="color: white">An Email has been sent to the user to Reset his/her Password.</h5>
                <a href="{% url 'login' %}">Back to Login?</a>
-          </div>
-        </div>
 
-    </div>
-
-
-</body>
-</html>
+{% endblock content %}

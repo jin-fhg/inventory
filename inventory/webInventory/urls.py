@@ -27,6 +27,7 @@ urlpatterns = [
     path('tag-list/update/', views.updateTagName, name='tagUpdate'),
     path('manage-users/profile/', views.profileUpdate, name='viewProfile'),
     path('manage-users/reset/', views.resetPass, name='adminpass-reset'),
+    path('manage-users/disable/', views.deactivateUser, name='admin-disable'),
 
     #Password Reset
 
@@ -39,10 +40,12 @@ urlpatterns = [
     ),
          name='password_reset_done'), #Success Message After Submit Email
 
-    path('password/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(),
+    path('password/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(
+        template_name='webInventory/passReset/passResetConfirm.html'),
          name='password_reset_confirm'), #Receiving Email to Reset Password
 
-    path('password-reset-complete/', auth_views.PasswordResetCompleteView.as_view(),
+    path('password-reset-complete/', auth_views.PasswordResetCompleteView.as_view(
+        template_name='webInventory/passReset/passResetComplete.html'),
          name='password_reset_complete'), #Notification Message that the reset is done
 
 ]
