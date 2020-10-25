@@ -27,3 +27,11 @@ ul.no-bullets li
 {
     list-style-type: none;
 }
+
+.btnEditDesc:hover{
+    cursor: pointer;
+}
+
+.txtEditDesc{
+    display: none;
+}

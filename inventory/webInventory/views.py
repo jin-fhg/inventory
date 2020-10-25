@@ -83,7 +83,7 @@ def inventoryList(request):
     all_folders = ItemFolder.objects.all()
 
     #New Technique - Make the queryset a normal list so that you can update it
-    folder_list = [{'id': x.id, 'name': x.name, 'description': x.description} for x in all_folders]
+    folder_list = [{'id': x.id, 'name': x.name, 'description': x.description, 'created': x.created_on} for x in all_folders]
 
     #Add the number of items in the folder_list
     for folder in folder_list:
@@ -341,6 +341,27 @@ def updateFolder(request):
     if request.method == 'POST':
         if request.is_ajax and request.user.is_authenticated:
             folder = ItemFolder.objects.get(id=request.POST['id'])
+            if request.POST.get('value'):
+                folder_from = folder.name
+                folder.name = request.POST['value']
+
+                AuditTrail.objects.create(action='Updated', what= 'Folder Name',
+                                              action_from = folder_from,
+                                              action_to = folder.name,
+                                              profile_name=request.user.profile.name,
+                                              user_id=request.user.id)
+                folder.save()
+                logger.error("Update Successful")
+                return HttpResponse("Update is Successful")
+            else:
+                return HttpResponse("Error: No New Value Detected")
+    return HttpResponse(None)
+
+@login_required
+def updateFolderDesc(request, pk):
+    if request.method == 'POST':
+        if request.is_ajax and request.user.is_authenticated:
+            folder = ItemFolder.objects.get(id=request.POST['id'])
             whatToupdate = request.POST['update']
             if whatToupdate == 'name':
                 if request.POST.get('value'):
@@ -372,6 +393,7 @@ def updateFolder(request):
                 logger.error("Update Successful")
                 return HttpResponse("Update is Successful")
     return HttpResponse(None)
+
 
 
 @login_required

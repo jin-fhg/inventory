@@ -23,7 +23,13 @@
             <div class="card">
                 <div class="card-header">
                     <h3>{{ folder.name }}</h3>
-                    <p align="left">Description: <blockquote align="left">{{ folder.description }}</blockquote></p>
+                    {% csrf_token %}
+                    <p align="left">
+                        <i class="fa fa-pencil-square-o btnEditDesc" aria-hidden="true"></i>
+                        Description:
+                        <blockquote class="descContent" align="left">{{ folder.description }}</blockquote>
+                        <textarea type="text" class="form-control txtEditDesc" name="folderDesc" db_id="{{ folder.id }}"></textarea>
+                    </p>
                 </div>
                 <div class="card-body">
                     <p align="left">

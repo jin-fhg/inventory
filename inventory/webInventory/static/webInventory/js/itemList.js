@@ -38,5 +38,33 @@ $(function (){
     });
 
 
+     $('.btnEditDesc').on('click', function (){
+        var txt = $('.descContent').text()
+        $('.txtEditDesc').val(txt);
+        $('.descContent, .txtEditDesc').toggle();
+        $('.txtEditDesc').focus();
+    })
+
+    $('.txtEditDesc').on('blur focusOut', function (){
+       $('.descContent,.txtEditDesc').toggle();
+       $('.descContent').text($(this).val());
+       var db_id = $(this).attr('db_id')
+       var txtVal = $(this).val()
+       console.log(db_id, txtVal)
+       var csrfmiddlewaretoken = $(this).closest('div').find('input[name=csrfmiddlewaretoken]').val();
+
+       $.ajax({
+               type: 'POST',
+               url: 'update/',
+               data: {
+                   update: 'description',
+                   id: db_id,
+                   value: txtVal,
+                   csrfmiddlewaretoken: csrfmiddlewaretoken,
+               }
+           })
+    });
+
+
 
 });

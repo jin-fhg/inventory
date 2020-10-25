@@ -24,6 +24,7 @@ urlpatterns = [
     #Json Responses and Ajaxes
     path('home/chart-format/', views.loadChart, name='loadChart'),
     path('list/update/', views.updateFolder, name='updateFolder'),
+    path('item-list/<pk>/update/', views.updateFolderDesc, name='updateFolderDesc'),
     path('tag-list/update/', views.updateTagName, name='tagUpdate'),
     path('manage-users/profile/', views.profileUpdate, name='viewProfile'),
     path('manage-users/reset/', views.resetPass, name='adminpass-reset'),

@@ -22,7 +22,7 @@ body{
 }
 
 
-.txtEditName, .txtEditDesc{
+.txtEditName{
     display: none;
 }
 .txtEditName{
@@ -41,9 +41,9 @@ body{
     font-weight: bold;
 }
 
-i{
+/*i{
     color: white;
-}
+}*/
 
 .itemFolder{
     width: 70%;
@@ -53,4 +53,8 @@ i{
 ul.no-bullets li
 {
     list-style-type: none;
+}
+
+.btnEditName:hover, .deleteOption:hover{
+    cursor: pointer;
 }
