@@ -66,5 +66,14 @@ $(function (){
     });
 
 
+    $('input[type=search]').add('select').on('focus', function (){
+
+         $(this).css('border', '3px solid powderblue')
+    });
+
+    $('select').add('input[type=search]').on('blur focusOut', function (){
+        $(this).css('border', '')
+    });
+
 
 });

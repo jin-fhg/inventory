@@ -7,10 +7,22 @@ $(function (){
             }
     });
 
+
+
     /*Adjust side of SideBar*/
     body = $('body').height()/1.4
     $('.bodyNav').css('height', body)
     /*End Adjust side of SideBar*/
+
+    var folderList = $('.folderList').DataTable({
+       bFilter: true,
+       bInfo: false,
+       bLengthChange: true,
+       bSort: true,
+       pageLength: 10,
+       language: { searchPlaceholder: "Names.."},
+       });
+
 
     $('.itemFolder').hover(function (){
         $(this).css('background-color', 'gray')
@@ -72,6 +84,15 @@ $(function (){
        $(".alert-success").slideUp(500);
     });
 
+
+    $('input[type=search]').add('select').on('focus', function (){
+
+         $(this).css('border', '3px solid powderblue')
+    });
+
+    $('select').add('input[type=search]').on('blur focusOut', function (){
+        $(this).css('border', '')
+    });
 
 
 

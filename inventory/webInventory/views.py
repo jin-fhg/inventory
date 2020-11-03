@@ -177,6 +177,21 @@ def tagList(request):
     return render(request, 'webInventory/tagList.html', context)
 
 @login_required
+def itemDetails(request, pk):
+    item = Item.objects.get(id=pk)
+    context = {
+        'item': item
+    }
+    #if request.method == 'POST':
+        #logger.error(request.POST)
+        #if 'itemTags' in request.POST:
+           # x = []
+            #for item in request.POST['itemTags']:
+                #logger.error(item)
+    return render(request, 'webInventory/itemDetails.html', context)
+
+
+@login_required
 def manageUsers(request):
 
     if request.method == 'POST':

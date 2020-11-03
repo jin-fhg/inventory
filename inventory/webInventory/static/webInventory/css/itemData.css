@@ -28,44 +28,14 @@ body{
     color: whitesmoke;
     margin-left: 11px;
 }
-.btnEditDesc{
-    margin-left: 5px;
-}
 
+.customLook{
+  --tag-bg                  : #285E70;
+  --tag-hover               : #62FF33;
+  --tag-text-color          : #FFF;
+  --tags-border-color       : silver;
+  --tag-text-color--edit    : #111;
+  --tag-remove-btn-bg--hover: black;
+  --tag-remove-bg           : var(--tag-hover);
 
-.txtEditName{
-    display: none;
-}
-.txtEditName{
-    width: auto;
-    margin-bottom: 30px;
-}
-
-
-.warning{
-  background-color: #fff;
-  border-bottom: 2px solid red;
-}
-
-.descTitle{
-    margin-bottom: 0px;
-    font-weight: bold;
-}
-
-/*i{
-    color: white;
-}*/
-
-.itemFolder{
-    width: 70%;
-    margin: 10px auto;
-}
-
-ul.no-bullets li
-{
-    list-style-type: none;
-}
-
-.btnEditName:hover, .deleteOption:hover{
-    cursor: pointer;
 }

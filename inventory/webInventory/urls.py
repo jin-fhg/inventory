@@ -17,9 +17,11 @@ urlpatterns = [
     path('tag-list/', views.tagList, name='tagList'),
     path('manage-users/', views.manageUsers, name='manageUsers'),
     path('audit-trail/',views.auditTrail, name='auditTrail'),
+    path('item-details/<pk>/', views.itemDetails, name='item-details'),
     path('password-setup/', views.passwordSetup, name='password-setup'),
     path('activate/<slug:uidb64>/<slug:token>/',
          views.activate, name='activate'),
+
 
     #Json Responses and Ajaxes
     path('home/chart-format/', views.loadChart, name='loadChart'),

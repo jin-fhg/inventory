@@ -47,7 +47,10 @@
                             {% for item in itemList %}
                                 <tr>
                                     <td>
-                                        {{ item.name }}
+                                        <a href="{% url 'item-details' item.id %}">
+                                            {{ item.name }}
+                                        </a>
+
                                     </td>
 
                                     <td>
