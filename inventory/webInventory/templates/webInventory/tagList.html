@@ -27,10 +27,14 @@
                         {% if messages %}
                             <ul class="alert no-bullets">
                                 {% for message in messages %}
-                                    <li class="alert alert-success"> {{ message }} </li>
+                                    {% if message.tags == "success" %}
+                                        <li class="alert alert-success"> {{ message }} </li>
+                                    {% else %}
+                                        <li class="alert alert-danger"> {{ message }} </li>
+                                    {% endif %}
                                 {% endfor %}
                             </ul>
-                         {% endif %}
+                        {% endif %}
                         <table class="table table-hover" id="tagList">
                             <thead>
                                 <th>Name</th>

@@ -6,6 +6,8 @@
         {% load static %}
              <link href="{% static 'webInventory/css/itemList.css' %}" rel="stylesheet" type="text/css">
              <script src="{% static 'webInventory/js/itemList.js' %}"></script>
+             <link href="{% static 'webInventory/css/tagify.css' %}" rel="stylesheet" type="text/css">
+             <script src="{% static 'webInventory/js/tagify.min.js' %}"></script>
 {% endblock header %}
 
 {% block content %}
@@ -97,6 +99,8 @@
                                 <input type="number" name="quantity" class="form-control newItemField" placeholder="Quantity..." required>
                                 <input type="number" name="min-quantity" class="form-control newItemField" placeholder="Set Minimum Quantity...">
                                 <textarea cols="48" class="form-control newItemField" name="description" placeholder="Description..."></textarea>
+                                <textarea cols="48" name="itemTags" id="itemTags" class="itemTags customLook"></textarea>
+
 
                           </div>
 
@@ -109,4 +113,29 @@
                 </div>
           </div>
     </div>
+    </div>
+
+    <script>
+        var textarea = document.getElementById('itemTags')
+        const method = 'GET'
+        const url = 'tags/'
+
+
+        $.ajax({
+            type: method,
+            url: url,
+            success: function(data) {
+                console.log('Success')
+                var tagify = new Tagify(textarea, {
+                enforceWhiteList: true,
+                whitelist: data['tags']
+                })
+            }
+        });
+
+
+
+
+
+    </script>
 {% endblock content %}

@@ -23,7 +23,6 @@ from django.core.mail import EmailMessage
 
 logger = logging.getLogger(__name__)
 
-
 def login_view(request):
     if request.method == 'POST':
         user = authenticate(request, username=request.POST['uname'], password=request.POST['pword'])
@@ -127,13 +126,28 @@ def itemList(request, pk):
     itemList = Item.objects.filter(itemFolder_id=pk)
 
     if request.method == 'POST':
+        logger.error(request.POST['itemTags'])
+        tags = common.Convert(request.POST['itemTags'])  # Converted to Array using the custom Method
+        print(tags,'Converted')
+
+
         item = Item.objects.create(itemFolder_id = pk, name = request.POST['name'], price = request.POST['price'],
                                    quantity = request.POST['quantity'], minQuantity= request.POST['min-quantity'],
                                    description = request.POST['description'])
+
+
         AuditTrail.objects.create(action='Added', what=item.name + ' to Folder ' + folder.name,
                                   profile_name=request.user.profile.name,
                                   user_id=request.user.id)
         messages.success(request, f'Item Added Successfully')
+        # Add Tag Relationship
+        for tag in tags:
+            try:
+                relationTag = Tag.objects.get(name=tag)
+                ItemTag.objects.create(item_id= item.id, tag_id= relationTag.id)
+            except(Tag.DoesNotExist):
+                print('This object ' + tag + ' Does not Exist')
+
         return redirect('itemList', pk)
 
     #ean = common.create_barcode(1)
@@ -145,21 +159,52 @@ def itemList(request, pk):
 
     return render(request, 'webInventory/itemList.html', context)
 
+@login_required
+def itemDetails(request, pk):
+    item = Item.objects.get(id=pk)
+
+    # Get Tags from Items Related to the Tags
+    itemTags = ItemTag.objects.filter(item_id=pk)
+    x = []
+    for tag in itemTags:
+        obj = Tag.objects.get(id=tag.tag_id)
+        x.append(obj.name)
+
+    context = {
+        'item': item,
+        'itemTags': x
+    }
+    if request.method == 'POST':
+        logger.error(request.POST)
+        if 'itemTags' in request.POST:
+            tags = common.Convert(request.POST['itemTags'])
+            logger.error(tags)
+            #tags = tags.replace("'\'", '')
+            #context['tags'] = tags
+            #logger.error(context)
+    return render(request, 'webInventory/itemDetails.html', context)
+
+
 def tagList(request):
     tags = Tag.objects.all()
     if request.method == 'POST':
         if 'addTag' in request.POST:
             tag_name = request.POST['tagName']
             if tag_name:
-                newTag = Tag.objects.create(name=tag_name, created_by_id=request.user.id,
+                if not Tag.objects.filter(name=tag_name).exists():
+                    newTag = Tag.objects.create(name=tag_name, created_by_id=request.user.id,
                                    created_by_name=request.user.profile.name)
 
-                AuditTrail.objects.create(action='Added', what='Tag:' + newTag.name,
+                    AuditTrail.objects.create(action='Added', what='Tag:' + newTag.name,
                                           profile_name=request.user.profile.name,
                                           user_id=request.user.id)
 
-                messages.success(request, f'Item Added Successfully')
-                return redirect('tagList')
+                    messages.success(request, f'Tag Added Successfully')
+                    return redirect('tagList')
+
+                else:
+                    messages.error(request, f'Tag already exist')
+                    return redirect('tagList')
         elif 'deleteOptionId' and 'saveDeleteOption' in request.POST:
             tag = Tag.objects.get(id=request.POST['deleteOptionId'])
 
@@ -175,21 +220,6 @@ def tagList(request):
         'tags': tags,
     }
     return render(request, 'webInventory/tagList.html', context)
-
-@login_required
-def itemDetails(request, pk):
-    item = Item.objects.get(id=pk)
-    context = {
-        'item': item
-    }
-    #if request.method == 'POST':
-        #logger.error(request.POST)
-        #if 'itemTags' in request.POST:
-           # x = []
-            #for item in request.POST['itemTags']:
-                #logger.error(item)
-    return render(request, 'webInventory/itemDetails.html', context)
-
 
 @login_required
 def manageUsers(request):
@@ -487,5 +517,16 @@ def deactivateUser(request):
             status = "User is now Active"
     data = {
         'status': status
+    }
+    return JsonResponse(data)
+
+@login_required
+def getTags(request, pk):
+    all_tags = Tag.objects.all()
+    tags = []
+    for item in all_tags:
+        tags.append(item.name)
+    data = {
+        'tags': tags
     }
     return JsonResponse(data)

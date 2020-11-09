@@ -31,6 +31,8 @@ urlpatterns = [
     path('manage-users/profile/', views.profileUpdate, name='viewProfile'),
     path('manage-users/reset/', views.resetPass, name='adminpass-reset'),
     path('manage-users/disable/', views.deactivateUser, name='admin-disable'),
+    path('item-list/<pk>/tags/', views.getTags, name='gettags'),
+    path('item-details/<pk>/tags/', views.getTags, name='gettagsDetails'),
 
     #Password Reset
 

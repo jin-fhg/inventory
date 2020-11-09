@@ -69,3 +69,12 @@ def create_barcode(itemID):
 
     return filename
 
+def Convert(string):
+    # Use split to the string to return the data as an array and to capture the desired string
+    li = string.split(":")  #split the String into an array using the : char on the string
+    convertedData = []
+    for item in range(1, len(li)):
+        str = li[item].split('"')  #split again starting from the second element, this time, it uses the " character in the string of the element
+        convertedData.append(str[1])
+        #print(str[1], "Print from Function") #print the 1st element and return it
+    return convertedData

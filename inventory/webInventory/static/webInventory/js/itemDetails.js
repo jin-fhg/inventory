@@ -14,7 +14,7 @@ $(function(){
     /*End Adjust side of SideBar*/
 
 
-    Get Array from the text area tagify
+/*    Get Array from the text area tagify
     $('.submit').on('click', function(e){
         e.preventDefault()
         values = []
@@ -24,7 +24,7 @@ $(function(){
         })
         console.log(values, "All Values")
         console.log($('.itemTags').val(), 'Logged')
-    });
+    });*/
 
 
 
