@@ -17,3 +17,10 @@ body{
     border-left: 1px solid #848484;
     padding-left: 3px;
 }
+
+
+
+.btn-add {
+    background-color: #285E70;
+    color: whitesmoke;
+    margin-left: 11px;

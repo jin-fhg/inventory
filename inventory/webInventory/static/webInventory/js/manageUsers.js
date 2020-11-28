@@ -80,6 +80,12 @@ $(function (){
                 $('.profileAddress').val(data['address'])
                 $('.profilePhone').val(data['phone'])
                 $('.profileEmail').val(data['email'])
+
+                if( data['role'] == String(1)){
+                    $('#isAdminEdit').attr('checked', true);
+                }else if(data['role'] == String(2)){
+                    $('#isAdminEdit').attr('checked', false);
+                }
             }
 
         })
@@ -148,6 +154,10 @@ $(function (){
 
     })
 
+    $('[data-toggle="tooltipEdit"]').tooltip();
+    $('[data-toggle="tooltipDelete"]').tooltip();
+    $('[data-toggle="tooltipReset"]').tooltip();
+    $('[data-toggle="tooltipActivate"]').tooltip();
 
 
 })

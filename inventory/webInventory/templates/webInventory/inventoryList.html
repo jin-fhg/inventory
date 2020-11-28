@@ -59,7 +59,11 @@
                                 <i class="fas fa-folder-open" style="margin-right:5px"></i>
                                 <a class="folderName" href="{% url 'itemList' folder.id %}" style="color: black">{{ folder.name }}</a>
                                 <input type="text" class="form-control txtEditName" name="folderName" db_id="{{ folder.id }}">
-                                <i class="fa fa-pencil-square-o btnEditName" aria-hidden="true"></i>
+                                {% if request.user.profile.role == '1' %}
+                                    <span data-toggle="tooltip" data-placement="right" title="Edit">
+                                        <i class="fa fa-pencil-square-o btnEditName" aria-hidden="true"></i>
+                                    </span>
+                                {% endif %}
                             </p>
                         </td>
                         <td>
@@ -69,8 +73,12 @@
                             {{ folder.created }}
                         </td>
                         <td>
-                            <i class="fa fa-trash-alt deleteOption" aria-hidden="true"
-                               data-toggle="modal" data-target="#deleteOptionModal" db_id="{{ folder.id }}"></i>
+                            {% if request.user.profile.role == '1' %}
+                                <span data-toggle="tooltip" data-placement="bottom" title="Delete">
+                                <i class="fa fa-trash-alt deleteOption" aria-hidden="true"
+                                   data-toggle="modal" data-target="#deleteOptionModal" db_id="{{ folder.id }}"></i>
+                                </span>
+                            {% endif %}
                         </td>
                     </tr>
                 {% endfor %}

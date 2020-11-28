@@ -86,4 +86,6 @@ $(function (){
        $(".alert-success").slideUp(500);
     });
 
+    $('[data-toggle="tooltip"]').tooltip();
+
 })

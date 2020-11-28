@@ -14,9 +14,28 @@ class Profile(models.Model):
     alt_phone = models.CharField(max_length=50, blank=True, null=True)
     address = models.CharField(max_length=200, blank=True, null=True)
     created_on = models.DateTimeField(default=datetime.now, null=True, blank=True)
+    role = models.CharField(max_length=2, blank=True, null=True)
 
     def __str__(self):
         return self.name
+
+
+class companyInformation(models.Model):
+    companyName = models.CharField(max_length=250, blank=True, null=True)
+    barcodeType = models.CharField(max_length=20, blank=True, null=True)
+    companyPrefix = models.CharField(max_length=6, blank=True, null=True)
+    logo = models.ImageField(null=True, blank=True, upload_to='logo/')
+
+    def __str__(self):
+        return self.companyName
+
+
+class UserCompany(models.Model):
+    company = models.ForeignKey(companyInformation, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    assigned_date = models.DateTimeField(default=datetime.now)
+
+
 
 class ItemFolder(models.Model):
     name = models.CharField(max_length=30, blank=True, null= True)
@@ -25,6 +44,7 @@ class ItemFolder(models.Model):
     created_on = models.DateTimeField(default=datetime.now)
     created_by = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     created_by_name = models.CharField(max_length=100, blank=True, null= True)
+
     def __str__(self):
         return self.name
 
@@ -49,7 +69,6 @@ class Tag(models.Model):
     created_on = models.DateTimeField(default=datetime.now)
     created_by = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=True, blank=True)
     created_by_name = models.CharField(max_length=100, blank=True, null=True)
-
     def __str__(self):
         return self.name
 

@@ -58,12 +58,14 @@
                               </a>
                             </li>
 
+                            {% if request.user.profile.role == '1' %}
                             <li class="nav-item ">
                               <a class="nav-link" href="{% url 'manageUsers' %}">
                                   <i class="fas fa-chalkboard-teacher" aria-hidden="true" style="margin-right: 8px"></i>
                                   Manage Users
                               </a>
                             </li>
+                            {% endif %}
 
                             <div class="bodyNav">
 
@@ -132,7 +134,6 @@
 
                       <div class="mr-3">
                         <div class="circle">
-
                         </div>
                       </div>
                       <div>
@@ -143,6 +144,12 @@
                         <input class="requestContent" name="requestedSoT" type="hidden" value="{{ item.data }}">
                       </div>
                     </a>
+                    <center>
+                            <a data-toggle="modal" data-target="#companyInfoModal">
+                            <i class="fa fa-info-circle" aria-hidden="true" style="margin-right: 8px"></i>
+                            Company Info
+                            </a>
+                    </center>
                     <div class="dropdown-divider"></div>
                         <center>
                             <a href="{% url 'logout' %}">
@@ -168,6 +175,42 @@
 
 
         </div>
+            <div id="companyInfoModal" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                          <div class="modal-header">
+                              <h5 class="">Company Information</h5>
+                              <button type="button" class="close" data-dismiss="modal">&times;</button>
+                          </div>
+                         <form method="POST">
+                           {% csrf_token %}
+                              <div class="modal-body text-center">
+                                  <form class="form justify-content-center">
+                                      <input class="form-control" type="text" name="companyName" value="{{ companyDetails.companyName }}" placeholder="Company Name"><br>
+                                      <input class="form-control" type="text" name="companyName" value="{{ companyDetails.companyPrefix }}" placeholder="Company Prefix"><br>
+                                      <select name="barcodeType" class="form-control">
+                                          {% for option in barcodeOptions %}
+                                                <option value="{{ option }}" {% if companyDetails.barcodeType == option %}selected{% endif %}>{{ option }}</option>
+                                          {% endfor %}
+                                      </select>
+                                      <br>
+                                      <label for="img">{% if companyDetails.logo.path %}Change Logo:{% else %}Select Image:{% endif %}</label>
+                                        <input class="form-control" type="file" id="img" name="img" accept="image/*">
+                                  </form>
+                              </div>
+
+                              <div class="modal-footer">
+                                    <button type="submit" class="btn btn-add saveDeleteOption" name="saveInfo" id="saveInfo">Yes</button>
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+
+                              </div>
+                          </form>
+                    </div>
+
+                </div>
+            </div>
        </div>
        {% comment %}End of Main Row{% endcomment %}
     </div>

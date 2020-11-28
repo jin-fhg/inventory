@@ -48,3 +48,7 @@ ul.no-bullets li
   --tag-remove-bg           : var(--tag-hover);
 
 }
+
+i {
+    cursor: pointer;
+}

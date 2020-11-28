@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 import logging
 from django.contrib.auth.models import User, Group
 from django.contrib import messages
-from .models import Profile, ItemFolder, Item, Tag, ItemTag, AuditTrail, Role, UserRole
+from .models import Profile, ItemFolder, Item, Tag, ItemTag, AuditTrail, Role, UserRole, companyInformation, UserCompany
 from . import common
 from datetime import datetime
 import json
@@ -23,7 +23,17 @@ from django.core.mail import EmailMessage
 
 logger = logging.getLogger(__name__)
 
+
+
+def findLength(number):
+    newNum = len(str(number))
+    if newNum == 1:
+        pass
+    return newNum
+
 def login_view(request):
+    x = findLength(123)
+    print(x)
     if request.method == 'POST':
         user = authenticate(request, username=request.POST['uname'], password=request.POST['pword'])
         if user is not None:
@@ -40,26 +50,30 @@ def login_view(request):
     return render(request, 'webInventory/login.html')
 
 def logout_view(request):
-    if request.method == 'POST':
-        user = authenticate(request, username=request.POST['uname'], password=request.POST['pword'])
-        if user is not None:
-            login(request, user)
-            AuditTrail.objects.create(action='Login', user_id=request.user.id, profile_name=request.user.profile.name)
-            if not 'remember' in request.POST:
-                request.session.set_expiry(0)
-            return redirect('home')
+    if not request.user.is_anonymous:
+        if request.method == 'POST':
+            user = authenticate(request, username=request.POST['uname'], password=request.POST['pword'])
+            if user is not None:
+                login(request, user)
+                AuditTrail.objects.create(action='Login', user_id=request.user.id, profile_name=request.user.profile.name)
+                if not 'remember' in request.POST:
+                    request.session.set_expiry(0)
+                return redirect('home')
+            else:
+                messages.error(request, f'Login Failed. Incorrect Username or Password.')
+                return redirect('login')
+
         else:
-            messages.error(request, f'Login Failed. Incorrect Username or Password.')
-            return redirect('login')
-    else:
-        AuditTrail.objects.create(action='Logout', user_id=request.user.id, profile_name=request.user.profile.name)
-        messages.success(request, f'You are now logged out.')
-        logout(request)
+            AuditTrail.objects.create(action='Logout', user_id=request.user.id, profile_name=request.user.profile.name)
+            messages.success(request, f'You are now logged out.')
+            logout(request)
     return render(request, 'webInventory/login.html')
 
 
 @login_required
 def index(request):
+    companyDetails = common.getCompany(request)
+    barcodeOptions = common.getCompanyOptions()
     all_foldersCount = len(ItemFolder.objects.all())
     latest_audits = AuditTrail.objects.all().order_by('-created_on')[0:4]
     logger.error(latest_audits)
@@ -67,6 +81,8 @@ def index(request):
         logger.error(request.POST)
 
     context = {
+       'barcodeOptions': barcodeOptions,
+       'companyDetails': companyDetails,
        'countFolder' : all_foldersCount,
        'countItemFolders' : common.countFolderItemsAll(),
         'audits': latest_audits,
@@ -80,6 +96,8 @@ def index(request):
 @login_required
 def inventoryList(request):
     all_folders = ItemFolder.objects.all()
+    companyDetails = common.getCompany(request)
+    barcodeOptions = common.getCompanyOptions()
 
     #New Technique - Make the queryset a normal list so that you can update it
     folder_list = [{'id': x.id, 'name': x.name, 'description': x.description, 'created': x.created_on} for x in all_folders]
@@ -114,6 +132,8 @@ def inventoryList(request):
             else:
                 logger.error("No POST")
     context = {
+        'barcodeOptions': barcodeOptions,
+        'companyDetails': companyDetails,
         'folders' : folder_list,
     }
 
@@ -122,39 +142,54 @@ def inventoryList(request):
 
 @login_required
 def itemList(request, pk):
+    provided_bars = ['code39', 'code128', 'ean', 'ean13', 'ean8', 'gs1', 'gtin',
+                     'isbn', 'isbn10', 'isbn13', 'issn', 'jan', 'pzn', 'upc', 'upca']
     folder = ItemFolder.objects.get(id=pk)
+    companyDetails = common.getCompany(request)
+    barcodeOptions = common.getCompanyOptions()
     itemList = Item.objects.filter(itemFolder_id=pk)
 
     if request.method == 'POST':
-        logger.error(request.POST['itemTags'])
-        tags = common.Convert(request.POST['itemTags'])  # Converted to Array using the custom Method
-        print(tags,'Converted')
+        if 'btnAddItem' in request.POST:
+            logger.error(request.POST['itemTags'])
+            tags = common.Convert(request.POST['itemTags'])  # Converted to Array using the custom Method
+            print(tags,'Converted')
 
 
-        item = Item.objects.create(itemFolder_id = pk, name = request.POST['name'], price = request.POST['price'],
-                                   quantity = request.POST['quantity'], minQuantity= request.POST['min-quantity'],
-                                   description = request.POST['description'])
+            item = Item.objects.create(itemFolder_id = pk, name = request.POST['name'], price = request.POST['price'],
+                                       quantity = request.POST['quantity'], minQuantity= request.POST['min-quantity'],
+                                       description = request.POST['description'])
+            newBar = common.create_barcode(item, request)
+            item.barcode = newBar
+            item.save()
+            AuditTrail.objects.create(action='Added', what=item.name + ' to Folder ' + folder.name,
+                                      profile_name=request.user.profile.name,
+                                      user_id=request.user.id)
+            messages.success(request, f'Item Added Successfully')
+            # Add Tag Relationship
+            for tag in tags:
+                try:
+                    relationTag = Tag.objects.get(name=tag)
+                    ItemTag.objects.create(item_id= item.id, tag_id= relationTag.id)
+                except(Tag.DoesNotExist):
+                    print('This object ' + tag + ' Does not Exist')
 
+            return redirect('itemList', pk)
 
-        AuditTrail.objects.create(action='Added', what=item.name + ' to Folder ' + folder.name,
-                                  profile_name=request.user.profile.name,
-                                  user_id=request.user.id)
-        messages.success(request, f'Item Added Successfully')
-        # Add Tag Relationship
-        for tag in tags:
-            try:
-                relationTag = Tag.objects.get(name=tag)
-                ItemTag.objects.create(item_id= item.id, tag_id= relationTag.id)
-            except(Tag.DoesNotExist):
-                print('This object ' + tag + ' Does not Exist')
-
-        return redirect('itemList', pk)
+        elif 'saveDeleteOption' in request.POST:
+            item = Item.objects.get(id=request.POST['deleteOptionId'])
+            item.delete()
+            messages.success(request, f'Item Successfully Deleted')
+            return redirect('itemList', pk)
 
     #ean = common.create_barcode(1)
     #logger.error(ean)
     context = {
+        'barcodeOptions': barcodeOptions,
+        'companyDetails': companyDetails,
         'folder': folder,
-        'itemList': itemList
+        'itemList': itemList,
+        'bars': provided_bars
     }
 
     return render(request, 'webInventory/itemList.html', context)
@@ -162,7 +197,8 @@ def itemList(request, pk):
 @login_required
 def itemDetails(request, pk):
     item = Item.objects.get(id=pk)
-
+    companyDetails = common.getCompany(request)
+    barcodeOptions = common.getCompanyOptions()
     # Get Tags from Items Related to the Tags
     itemTags = ItemTag.objects.filter(item_id=pk)
     x = []
@@ -171,6 +207,8 @@ def itemDetails(request, pk):
         x.append(obj.name)
 
     context = {
+        'barcodeOptions': barcodeOptions,
+        'companyDetails': companyDetails,
         'item': item,
         'itemTags': x
     }
@@ -187,6 +225,8 @@ def itemDetails(request, pk):
 
 def tagList(request):
     tags = Tag.objects.all()
+    companyDetails = common.getCompany(request)
+    barcodeOptions = common.getCompanyOptions()
     if request.method == 'POST':
         if 'addTag' in request.POST:
             tag_name = request.POST['tagName']
@@ -217,13 +257,16 @@ def tagList(request):
             return redirect('tagList')
 
     context = {
+        'barcodeOptions': barcodeOptions,
+        'companyDetails': companyDetails,
         'tags': tags,
     }
     return render(request, 'webInventory/tagList.html', context)
 
 @login_required
 def manageUsers(request):
-
+    companyDetails = common.getCompany(request)
+    barcodeOptions = common.getCompanyOptions()
     if request.method == 'POST':
         logger.error(request.POST)
         if 'addUser' in request.POST:
@@ -280,10 +323,13 @@ def manageUsers(request):
                                               user_id=request.user.id)
 
                     if 'isAdmin' in request.POST:
-                        role = UserRole.objects.create(role_id=1, user_id=newUser.id)
+                        #role = UserRole.objects.create(role_id=1, user_id=newUser.id)
+                        newProfile.role = 1
+                        newProfile.save()
                     else:
-                        role = UserRole.objects.create(role_id=2, user_id=newUser.id)
-
+                        #role = UserRole.objects.create(role_id=2, user_id=newUser.id)
+                        newProfile.role = 2
+                        newProfile.save()
                     return redirect('manageUsers')
                 else:
                     messages.error(request, f'User with email ' + request.POST['email'] + ' already exists')
@@ -308,6 +354,10 @@ def manageUsers(request):
                 profile.phone = request.POST['profilePhone']
                 profile.email = request.POST['profileEmail']
                 user.email = request.POST['profileEmail']
+                if 'isAdmin' in request.POST:
+                    profile.role = 1
+                else:
+                    profile.role = 2
                 profile.save()
                 user.save()
                 messages.success(request, f'User Profile Updated Successfully')
@@ -324,6 +374,7 @@ def manageUsers(request):
         profiles_temp.append(user.username)
         profiles_temp.append(Profile.objects.get(user_id=user.id).name)
         profiles_temp.append(user.is_active)
+        profiles_temp.append(Profile.objects.get(user_id=user.id).role)
         profiles_temp.append(Profile.objects.get(user_id=user.id).created_on)
         profiles.append(profiles_temp)
         profiles_temp = []
@@ -333,6 +384,8 @@ def manageUsers(request):
 
 
     context = {
+        'barcodeOptions': barcodeOptions,
+        'companyDetails': companyDetails,
         'users': profiles,
     }
     return render(request, 'webInventory/manageUsers.html', context)
@@ -368,6 +421,9 @@ def passwordSetup(request):
 
 @login_required
 def auditTrail(request):
+    companyDetails = common.getCompany(request)
+    barcodeOptions = common.getCompanyOptions()
+
     if request.method == 'POST':
         audits = AuditTrail.objects.filter(created_on__range=[str(request.POST['dateFrom']) + ' 00:00:00',
                                                               str(request.POST['dateTo']) + ' 23:59:59']).order_by('-id')
@@ -376,7 +432,9 @@ def auditTrail(request):
         audits = AuditTrail.objects.all().order_by('-id')
 
     context = {
-        'audits': audits
+        'barcodeOptions': barcodeOptions,
+        'companyDetails': companyDetails,
+        'audits': audits,
     }
     return render(request, 'webInventory/auditTrail.html', context)
 
@@ -477,6 +535,7 @@ def profileUpdate(request):
         'address': user.profile.address,
         'phone': user.profile.phone,
         'email': user.profile.email,
+        'role': user.profile.role,
     }
     return JsonResponse(data)
 

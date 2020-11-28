@@ -20,7 +20,7 @@
                 {% csrf_token %}
                 <input class="form-control" type="text" placeholder="Username..." name="UserName" required>
                 <label class="form-check-label">
-                    <input type="checkbox" id="isAdmin" name="isAdmin" value="setPass" checked>Is Admin
+                    <input type="checkbox" id="isAdmin" name="isAdmin" value="admin" checked>Is Admin
                 </label>
                 <label class="form-check-label">
                     <input type="checkbox" id="setPass" name="setPass" value="setPass" checked>Set Password
@@ -57,6 +57,7 @@
                 <th>Username</th>
                 <th>Name</th>
                 <th>Status</th>
+                <th>Role</th>
                 <th>Created On</th>
                 <th>Action</th>
             </thead>
@@ -76,18 +77,33 @@
                             {% else %}
                                 <td>Inactive</td>
                             {% endif %}
-
-                            <td>{{ user.4 }}</td>
+                            <td>
+                                {% if user.4 == '1' %}
+                                    Admin
+                                {% else %}
+                                    Staff
+                                {% endif %}
+                            </td>
+                            <td>{{ user.5 }}</td>
                             <td>
                                {% if not request.user.id == user.0 %}
+                                    <span data-toggle="tooltipEdit" data-placement="bottom" title="Edit">
                                     <i class="btn fa fa-pencil-square-o btnEditName" aria-hidden="true" data-toggle="modal" data-target="#modalEdit"></i>
+                                    </span>
+                                    <span data-toggle="tooltipDelete" data-placement="bottom" title="Delete">
                                     <i class="btn fa fa-trash-alt btnDelete" aria-hidden="true" data-toggle="modal" data-target="#deleteOptionModal"></i>
+                                    </span>
+                                    <span data-toggle="tooltipReset" data-placement="bottom" title="Reset">
                                     <i class="btn fa fa-key btnReset" aria-hidden="true" data-toggle="modal" data-target="#passReset"></i>
-                                    {% if user.3 == True %}
-                                        <i class="btn fa fa-lock disableUser" aria-hidden="true"></i>
-                                    {% else %}
-                                        <i class="btn fa fa-unlock disableUser" aria-hidden="true"></i>
-                                    {% endif %}
+                                    </span>
+
+                                    <span data-toggle="tooltipActivate" data-placement="bottom" title="Activate/Deactivate">
+                                        {% if user.3 == True %}
+                                            <i class="btn fa fa-lock disableUser" aria-hidden="true"></i>
+                                        {% else %}
+                                            <i class="btn fa fa-unlock disableUser" aria-hidden="true"></i>
+                                        {% endif %}
+                                    </span>
                                {% endif %}
                             </td>
                         </tr>
@@ -137,10 +153,13 @@
 
                                 <h3 type="text" class="userName"></h3>
                                 <input class="idHandlerUpdate" type="hidden" name="db_id">
-                                <input type="text" name="profileName" class="form-control profileName">
-                                <input type="text" name="profileAddress" class="form-control profileAddress">
-                                <input type="text" name="profilePhone" class="form-control profilePhone">
-                                <input type="text" name="profileEmail" class="form-control profileEmail">
+                                <input type="text" name="profileName" class="form-control profileName" placeholder="Last Name First Name M.I.">
+                                <label class="form-check-label">
+                                    <input type="checkbox" id="isAdminEdit" name="isAdmin" value="setPass" class="isAdmin">Is Admin
+                                </label>
+                                <input type="text" name="profileAddress" class="form-control profileAddress" placeholder="Street Address, Barangay, City/Province, PostCode">
+                                <input type="text" name="profilePhone" class="form-control profilePhone" placeholder="Phone Number">
+                                <input type="text" name="profileEmail" class="form-control profileEmail" placeholder="Email">
                             </div>
 
                             <div class="modal-footer">

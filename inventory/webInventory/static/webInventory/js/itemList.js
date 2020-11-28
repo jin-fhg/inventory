@@ -75,5 +75,9 @@ $(function (){
         $(this).css('border', '')
     });
 
+    $('.itemList').on('click','.btnDelete' ,function (){
+        item_id = $(this).closest('tr').attr('db_id')
+        $('.deleteOptionId').val(item_id)
+    })
 
 });

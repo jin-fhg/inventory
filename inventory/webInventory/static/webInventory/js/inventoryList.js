@@ -94,6 +94,6 @@ $(function (){
         $(this).css('border', '')
     });
 
-
+    $('[data-toggle="tooltip"]').tooltip();
 
 });
