@@ -14,6 +14,14 @@ $(function (){
     $('.bodyNav').css('height', body)
     /*End Adjust side of SideBar*/
 
+    $('.itemFolder').hover(function (){
+        $(this).css('background-color', 'gray')
+        $(this).find('a').css('color', 'white')
+
+    });
+
+    $('[data-toggle="tooltip"]').tooltip();
+
     var folderList = $('.folderList').DataTable({
        bFilter: true,
        bInfo: false,
@@ -24,17 +32,13 @@ $(function (){
        });
 
 
-    $('.itemFolder').hover(function (){
-        $(this).css('background-color', 'gray')
-        $(this).find('a').css('color', 'white')
 
-    });
 
     $('.showHide').on('click', function (){
         $('.addForm').fadeToggle('slow');
     });
 
-    $('.btnEditName').on('click', function (){
+    $('.folderList').on('click','.btnEditName',function (){
         var txt = $(this).closest('p').find('.folderName').html();
         $(this).closest('p').find('.txtEditName').val(txt)
         $(this).closest('p').find('.folderName,.txtEditName').toggle();
@@ -43,7 +47,7 @@ $(function (){
 
 
 
-    $('.txtEditName').on('blur focusOut', function (){
+    $('.folderList').on('blur focusOut','.txtEditName',function (){
        if(!$.trim(this.value).length){
            alert("The Field Cannot be Empty");
            $(this).addClass('warning');
@@ -69,12 +73,12 @@ $(function (){
     });
 
 
-    $('.itemFolder').mouseleave(function (){
+    /*$('.itemFolder').mouseleave(function (){
         $(this).css('background-color', 'white')
         $(this).find('a').css('color', 'black')
-    })
+    })*/
 
-    $('.deleteOption').on('click', function (){
+    $('.folderList').on('click', '.deleteOption' ,function (){
         var db_id = $(this).attr('db_id')
         $('.deleteOptionId').val(db_id)
     })
@@ -94,6 +98,6 @@ $(function (){
         $(this).css('border', '')
     });
 
-    $('[data-toggle="tooltip"]').tooltip();
+
 
 });

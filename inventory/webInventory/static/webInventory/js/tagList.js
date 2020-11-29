@@ -12,28 +12,6 @@ $(function (){
     $('.bodyNav').css('height', body)
     /*End Adjust side of SideBar*/
 
-    var viewTags = $('#tagList').DataTable({
-       bFilter: true,
-       bInfo: false,
-       bLengthChange: true,
-       bSort: true,
-       pageLength: 10,
-       language: { searchPlaceholder: "Search.."},
-       });
-
-    $('.addTag').on('click', function (){
-        $('.frmAddTag').fadeToggle();
-    });
-
-    $('input[type=search]').add('select').on('focus', function (){
-
-         $(this).css('border', '3px solid powderblue')
-    });
-
-    $('select').add('input[type=search]').on('blur focusOut', function (){
-        $(this).css('border', '')
-    });
-
     $('.btnEditName, .btnDelete').hover(
         function (){
         $(this).css('color', 'gray')
@@ -44,14 +22,44 @@ $(function (){
 
     )
 
-    $('.btnEditName').on('click', function (){
+    $('[data-toggle="tooltip"]').tooltip();
+
+    /*DataTable Declaration*/
+    var viewTags = $('#tagList').DataTable({
+       bFilter: true,
+       bInfo: false,
+       bLengthChange: true,
+       bSort: true,
+       pageLength: 10,
+       language: { searchPlaceholder: "Search.."},
+       });
+
+
+
+    $('.addTag').on('click', function (){
+        $('.frmAddTag').fadeToggle();
+    });
+
+
+    $('input[type=search]').add('select').on('focus', function (){
+
+         $(this).css('border', '3px solid powderblue')
+    });
+
+    $('select').add('input[type=search]').on('blur focusOut', function (){
+        $(this).css('border', '')
+    });
+
+
+
+    $('#tagList').on('click', '.btnEditName' ,function (){
         txt = $(this).closest('tr').find('p').text()
         $(this).closest('tr').find('.txtEditTagName').val(txt)
         $(this).closest('tr').find('.txtEditTagName, p').toggle()
         $(this).closest('tr').find('.txtEditTagName, p').focus()
     })
 
-    $('.txtEditTagName').on('blur focusOut', function (){
+    $('#tagList').on('blur focusOut','.txtEditTagName' ,function (){
        if($(this).val() == '') {
            alert("Please Enter a Value")
            $(this).css('border-bottom', '2px solid red')
@@ -76,7 +84,7 @@ $(function (){
        }
     });
 
-    $('.btnDelete').on('click', function (){
+    $('#tagList').on('click','.btnDelete', function (){
         tag_id = $(this).closest('tr').find('.txtEditTagName').attr('db_id')
         $('.deleteOptionId').val(tag_id)
     })
@@ -86,6 +94,6 @@ $(function (){
        $(".alert-success").slideUp(500);
     });
 
-    $('[data-toggle="tooltip"]').tooltip();
+
 
 })

@@ -12,6 +12,22 @@ $(function (){
     $('.bodyNav').css('height', body)
     /*End Adjust side of SideBar*/
 
+    $('.btnEditName, .btnDelete, .btnReset').hover(
+        function (){
+        $(this).css('color', 'gray')
+    },
+    function (){
+        $(this).css('color', 'black')
+    }
+
+    )
+
+    $('[data-toggle="tooltipEdit"]').tooltip();
+    $('[data-toggle="tooltipDelete"]').tooltip();
+    $('[data-toggle="tooltipReset"]').tooltip();
+    $('[data-toggle="tooltipActivate"]').tooltip();
+
+
     var viewUsers = $('.user-table').DataTable({
        bFilter: true,
        bInfo: false,
@@ -34,15 +50,7 @@ $(function (){
         $(this).css('border', '')
     });
 
-    $('.btnEditName, .btnDelete, .btnReset').hover(
-        function (){
-        $(this).css('color', 'gray')
-    },
-    function (){
-        $(this).css('color', 'black')
-    }
 
-    )
 
     $('#setPass').on('click', function (){
         if($(this).is(':checked')){
@@ -59,13 +67,13 @@ $(function (){
     });
 
     //Passing ID for Delete
-    $('.btnDelete').on('click', function (){
+    $('.user-table').on('click', '.btnDelete' ,function (){
         db_id =$(this).closest('tr').find('.handleId').val()
         $('.deleteOptionId').val(db_id)
     })
 
     //Passing ID for Edit
-    $('.btnEditName').on('click', function (){
+    $('.user-table').on('click', '.btnEditName' ,function (){
         db_id =$(this).closest('tr').find('.handleId').val()
         $('.idHandlerUpdate').val(db_id)
         $.ajax({
@@ -91,7 +99,7 @@ $(function (){
         })
     });
 
-    $('.btnReset').on('click', function(){
+    $('.user-table').on('click', '.btnReset' ,function(){
         $('.resetMessage').text("Loading...")
         $('.modal-footer').css('display', 'none')
         db_id =$(this).closest('tr').find('.handleId').val()
@@ -110,7 +118,7 @@ $(function (){
     });
 
 
-    $('.disableUser').on('click', function(){
+    $('.user-table').on('click', '.disableUser' ,function(){
         db_id =$(this).closest('tr').find('.handleId').val()
         var csrfmiddlewaretoken = $(this).closest('tr').find('input[name=csrfmiddlewaretoken]').val();
 
@@ -154,10 +162,7 @@ $(function (){
 
     })
 
-    $('[data-toggle="tooltipEdit"]').tooltip();
-    $('[data-toggle="tooltipDelete"]').tooltip();
-    $('[data-toggle="tooltipReset"]').tooltip();
-    $('[data-toggle="tooltipActivate"]').tooltip();
+
 
 
 })
