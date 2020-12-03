@@ -37,3 +37,14 @@ body{
   --tag-remove-bg           : var(--tag-hover);
 
 }
+
+
+.formEdit{
+       display:none;
+       border-radius: 4px;
+       border: 1px solid gray;
+}
+
+i{
+    cursor: pointer;
+}

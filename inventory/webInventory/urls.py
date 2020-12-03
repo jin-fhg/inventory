@@ -33,6 +33,7 @@ urlpatterns = [
     path('manage-users/disable/', views.deactivateUser, name='admin-disable'),
     path('item-list/<pk>/tags/', views.getTags, name='gettags'),
     path('item-details/<pk>/tags/', views.getTags, name='gettagsDetails'),
+    path('item-details/<pk>/edit/', views.updateItem, name='item-update'),
 
     #Password Reset
 

@@ -23,12 +23,49 @@
                 <div class="card-body">
                     <form method="POST">
                     {% csrf_token %}
-                    Name: <span>{{ item.name }}</span><br>
-                    Description: <span>{{ item.description }}</span><br>
-                    Price: <span>{{ item.price }}</span><br>
-                    Quantity: <span>{{ item.quantity }}</span><br>
-                    Min. Quantity: <span>{{ item.minQuantity }}</span><br>
-                    SKU: <span>{{ item.sku }}</span><br>
+                    <div class="fieldContainer">
+                    Name: <span class="field">{{ item.name }}</span><input type="text" class="itemName formEdit"
+                                                             name="itemName" placeholder="Item Name" value="{{ item.name }}">
+                                    <span data-toggle="tooltip" data-placement="right" title="Edit">
+                                        <i class="fa fa-pencil-square-o btnEdit" aria-hidden="true" style="display:none"></i>
+                                    </span><br>
+                    </div>
+
+                    <div class="fieldContainer">
+                    Description: <span class="field">{{ item.description }}</span><input type="text" class="itemDesc formEdit"
+                                                                           name="itemDesc" placeholder="Item Description" value="{{ item.description }}">
+                                    <span data-toggle="tooltip" data-placement="right" title="Edit">
+                                        <i class="fa fa-pencil-square-o btnEdit" aria-hidden="true" style="display:none"></i>
+                                    </span><br>
+                    </div>
+
+                    <div class="fieldContainer">
+                    Price: <span class="field">{{ item.price }}</span><input type="text" class="itemPrice formEdit"
+                                                                           name="itemPrice" placeholder="Item Price" value="{{ item.price }}">
+                                    <span data-toggle="tooltip" data-placement="right" title="Edit">
+                                        <i class="fa fa-pencil-square-o btnEdit" aria-hidden="true" style="display:none"></i>
+                                    </span><br>
+                    </div>
+
+                    <div class="fieldContainer">
+                    Quantity: <span class="field">{{ item.quantity }}</span><input type="text" class="itemQuantity formEdit"
+                                                                           name="itemQuantity" placeholder="Item Quantity" value="{{ item.quantity }}">
+                                    <span data-toggle="tooltip" data-placement="right" title="Edit">
+                                        <i class="fa fa-pencil-square-o btnEdit" aria-hidden="true" style="display:none"></i>
+                                    </span><br>
+                    </div>
+
+                    <div class="fieldContainer">
+                    Min. Quantity: <span class="field">{{ item.minQuantity }}</span><input type="text" class="itemMinQuantity formEdit"
+                                                                           name="itemMinQuantity" placeholder="Item Min. Quantity"
+                                                                             value="{{ item.minQuantity }}">
+                                    <span data-toggle="tooltip" data-placement="right" title="Edit">
+                                        <i class="fa fa-pencil-square-o btnEdit" aria-hidden="true" style="display:none"></i>
+                                    </span><br>
+                    </div>
+
+                    SKU: <span class="field">{{ item.sku }}</span><input type="text" class="itemSKU formEdit"
+                                                          name="itemSKU" placeholder="Item SKU" value="{{ item.sku }}"><br>
                     Barcode: <span>{{ item.barcode }}</span><br>
                     Created Date: <span>{{ item.created_on }}</span><br>
                     Tags:

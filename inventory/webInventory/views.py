@@ -589,3 +589,36 @@ def getTags(request, pk):
         'tags': tags
     }
     return JsonResponse(data)
+
+
+@login_required
+def updateItem(request, pk):
+    if request.method == 'POST' and request.is_ajax:
+        item = Item.objects.get(id=pk)
+        if request.POST['updateWhat'] == 'itemName':
+
+            item.name = request.POST['value']
+
+
+        elif request.POST['updateWhat'] == 'itemDesc':
+
+            item.description = request.POST['value']
+
+        elif request.POST['updateWhat'] == 'itemPrice':
+
+            item.price = request.POST['value']
+
+        elif request.POST['updateWhat'] == 'itemQuantity':
+
+            item.quantity = request.POST['value']
+
+        elif request.POST['updateWhat'] == 'itemMinQuantity':
+
+            item.minQuantity = request.POST['value']
+
+        else:
+            print('No Change')
+            return None
+
+        item.save()
+    return JsonResponse({'status': 200})
