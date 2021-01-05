@@ -98,6 +98,14 @@ $(function (){
         $(this).css('border', '')
     });
 
+    $('.td-container').hover(
+        function(){
+            $('.btnEditName').css('display', 'inline')
+        },
 
+        function(){
+            $('.btnEditName').css('display', 'none')
+        }
+    )
 
 });

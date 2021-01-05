@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'fgl&ik-ziv+=y(qj%!*%4m3_q7!28-7+(ta#@)&pbb5j1%eyo8'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -129,6 +129,6 @@ MEDIA_URL = '/media/'
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'spielshopper@gmail.com'
-EMAIL_HOST_PASSWORD = 'ringcentral100'
+EMAIL_HOST_USER = os.environ.get('SMTP_EMAIL')
+EMAIL_HOST_PASSWORD = os.environ.get('SMTP_PASS')
 EMAIL_PORT = 587

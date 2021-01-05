@@ -69,3 +69,7 @@ ul.no-bullets li
 .btnEditName:hover, .deleteOption:hover{
     cursor: pointer;
 }
+
+.btnEditName{
+    display:none;
+}

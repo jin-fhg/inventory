@@ -68,13 +68,14 @@
                                                           name="itemSKU" placeholder="Item SKU" value="{{ item.sku }}"><br>
                     Barcode: <span>{{ item.barcode }}</span><br>
                     Created Date: <span>{{ item.created_on }}</span><br>
+                    <br>
                     Tags:
                         <textarea name="itemTags" id="itemTags" class="itemTags customLook">
                         {% for tag in itemTags %}
                             {{ tag }},
                         {% endfor %}
                         </textarea>
-                        <button type="submit" class="btn btn-add submit">Send POST</button>
+                        <button type="submit" class="btn btn-add submit">Save Tag</button>
                     </form>
                 </div>
             </div>

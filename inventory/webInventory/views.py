@@ -202,10 +202,10 @@ def itemDetails(request, pk):
     # Get Tags from Items Related to the Tags
     itemTags = ItemTag.objects.filter(item_id=pk)
     x = []
-    for tag in itemTags:
-        obj = Tag.objects.get(id=tag.tag_id)
-        x.append(obj.name)
-
+    if itemTags:
+        for tag in itemTags:
+            obj = Tag.objects.get(id=tag.tag_id)
+            x.append(obj.name)
     context = {
         'barcodeOptions': barcodeOptions,
         'companyDetails': companyDetails,
@@ -217,6 +217,17 @@ def itemDetails(request, pk):
         if 'itemTags' in request.POST:
             tags = common.Convert(request.POST['itemTags'])
             logger.error(tags)
+            itemTags.delete()
+
+            if tags:
+                for tag in tags:
+                    try:
+                        relationTag = Tag.objects.get(name=tag)
+                        ItemTag.objects.create(item_id=item.id, tag_id=relationTag.id)
+                    except(Tag.DoesNotExist):
+                        print('This object ' + tag + ' Does not Exist')
+
+            return redirect('item-details', pk)
             #tags = tags.replace("'\'", '')
             #context['tags'] = tags
             #logger.error(context)

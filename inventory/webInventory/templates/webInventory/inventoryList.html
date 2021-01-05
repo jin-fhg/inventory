@@ -54,7 +54,7 @@
                 {% for folder in folders %}
                     <tr>
                         <td>
-                            <p>
+                            <p class="td-container">
                                 {% csrf_token %}
                                 <i class="fas fa-folder-open" style="margin-right:5px"></i>
                                 <a class="folderName" href="{% url 'itemList' folder.id %}" style="color: black">{{ folder.name }}</a>
